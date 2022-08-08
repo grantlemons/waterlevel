@@ -1,6 +1,6 @@
 [package]
 name = "rocket-test"
-author = "Grant Lemons"
+authors = ["Grant Lemons"]
 publish = false
 version = "0.1.0"
 edition = "2021"
