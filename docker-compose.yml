@@ -5,7 +5,7 @@ services:
         restart: always
         environment:
             - POSTGRES_PASSWORD=postgres
-            - POSTGRES_DB=rocket-test
+            - POSTGRES_DB=waterlevel
         ports:
             - 5432:5432
         healthcheck:

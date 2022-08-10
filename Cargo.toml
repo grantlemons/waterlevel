@@ -1,5 +1,5 @@
 [package]
-name = "rocket-test"
+name = "waterlevel-backend"
 authors = ["Grant Lemons"]
 publish = false
 version = "0.1.0"
