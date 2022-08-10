@@ -1,0 +1,8 @@
+setup:
+  - .github/*
+
+routes:
+  - src/routes/*
+
+backend:
+  - src/*
