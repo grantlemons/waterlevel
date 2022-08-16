@@ -29,7 +29,7 @@ services:
         env_file:
             - src/.env
         healthcheck:
-            test: curl -X GET --fail http://0.0.0.0:8000/api/v1 -Is
+            test: curl -X GET --fail http://0.0.0.0:8000/api/v1/health -Is
             interval: 20s
             timeout: 5s
             retries: 10
