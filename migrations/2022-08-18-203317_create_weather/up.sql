@@ -1,5 +1,6 @@
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE weather (
-    id uuid PRIMARY KEY DEFAULT uuid_generate_v4 () NOT NULL,
-    "location" point NOT NULL,
-    "timestamp" timestamp NOT NULL
+    id UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4 (),
+    "location" POINT NOT NULL,
+    "timestamp" TIMESTAMP NOT NULL
 );
