@@ -1,33 +1,44 @@
-use diesel_geometry::pg::sql_types::PgPoint;
+use diesel::*;
+
+use diesel_geometry::pg::data_types::PgPoint;
 use chrono::NaiveDateTime;
 use uuid::Uuid;
 
-#[derive(Queryable)]
+use crate::schema::*;
+
+#[derive(Insertable, QueryableByName, AsChangeset, Associations, Identifiable, Debug)]
+#[table_name = "weather"]
 pub struct Weather {
     pub id: Uuid,
     pub location: PgPoint,
     pub timestamp: NaiveDateTime,
 }
 
-#[derive(Queryable)]
+#[derive(Insertable, QueryableByName, AsChangeset, Associations, Identifiable, Debug)]
+#[belongs_to(Weather)]
+#[table_name = "water_levels"]
 pub struct WaterLevel {
     pub id: Uuid,
     pub location: PgPoint,
     pub timestamp: NaiveDateTime,
     pub weather_id: Uuid,
-    pub level: i8,
+    pub level: f32,
 }
 
-#[derive(Queryable)]
+#[derive(Insertable, QueryableByName, AsChangeset, Identifiable, Debug)]
+#[primary_key(key)]
+#[table_name = "config"]
 pub struct Config {
     pub key: String,
     pub value: String,
+    pub timestamp: NaiveDateTime,
 }
 
-#[derive(Queryable)]
+#[derive(Insertable, QueryableByName, AsChangeset, Identifiable, Debug)]
+#[table_name = "webhooks"]
 pub struct Webhook {
     pub id: Uuid,
     pub url: String,
-    pub last_sent: NaiveDateTime,
+    pub last_sent: Option<NaiveDateTime>,
     pub event: String,
 }

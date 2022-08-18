@@ -311,6 +311,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "diesel_geometry"
+version = "1.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9cbfd34cd233cc0f363875f1acd8e40e119d5c5e69eb99ffe9639f2596310b16"
+dependencies = [
+ "byteorder",
+ "diesel",
+]
+
+[[package]]
 name = "digest"
 version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1598,6 +1608,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "diesel",
+ "diesel_geometry",
  "dotenv",
  "rocket",
  "serde",

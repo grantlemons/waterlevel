@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate rocket;
+extern crate diesel;
 
 mod routes {
     pub mod analytics;
@@ -8,7 +9,10 @@ mod routes {
     pub mod webhooks;
 }
 
+pub mod models;
+
 use routes::*;
+use models::*;
 
 #[launch]
 fn rocket() -> _ {
