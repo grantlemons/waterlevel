@@ -1,5 +1,7 @@
 #[macro_use]
 extern crate rocket;
+#[macro_use]
+extern crate diesel;
 
 mod routes {
     pub mod analytics;
@@ -7,6 +9,9 @@ mod routes {
     pub mod waterlevel;
     pub mod webhooks;
 }
+
+pub mod models;
+pub mod schema;
 
 use routes::*;
 
@@ -18,25 +23,29 @@ fn rocket() -> _ {
         .mount(
             "/api/v1/config",
             routes![
-                config::get_all,
-                config::get_value,
-                config::create,
-                config::modify
+                routes::config::get_all,
+                routes::config::get_value,
+                routes::config::create,
+                routes::config::modify
             ],
         )
         .mount(
             "/api/v1/waterlevel",
             routes![
-                waterlevel::get_all,
-                waterlevel::get_on_date,
-                waterlevel::get_at_level,
-                waterlevel::get_above_level,
-                waterlevel::get_below_level
+                routes::waterlevel::get_all,
+                routes::waterlevel::get_on_date,
+                routes::waterlevel::get_at_level,
+                routes::waterlevel::get_above_level,
+                routes::waterlevel::get_below_level
             ],
         )
         .mount(
             "/api/v1/webhooks",
-            routes![webhooks::get, webhooks::create, webhooks::modify],
+            routes![
+                routes::webhooks::get,
+                routes::webhooks::create,
+                routes::webhooks::modify
+            ],
         )
 }
 
