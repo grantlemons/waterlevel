@@ -3,6 +3,6 @@ CREATE TABLE water_levels (
     id UUID PRIMARY KEY NOT NULL DEFAULT uuid_generate_v4 (),
     "location" POINT NOT NULL,
     "timestamp" TIMESTAMP NOT NULL,
-    weather_id UUID DEFAULT uuid_generate_v4 (),
-    level FLOAT NOT NULL
+    weather_id UUID,
+    level REAL NOT NULL
 );

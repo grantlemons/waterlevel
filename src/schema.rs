@@ -9,7 +9,7 @@ table! {
 table! {
     water_levels (id) {
         id -> Uuid,
-        location -> Point,
+        location -> diesel_geometry::sql_types::Point,
         timestamp -> Timestamp,
         weather_id -> Nullable<Uuid>,
         level -> Float8,
@@ -19,7 +19,7 @@ table! {
 table! {
     weather (id) {
         id -> Uuid,
-        location -> Point,
+        location -> diesel_geometry::sql_types::Point,
         timestamp -> Timestamp,
     }
 }
