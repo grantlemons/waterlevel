@@ -1,31 +1,31 @@
-use diesel::pg::types::sql_types::*
+use diesel_geometry::sql_types::Point;
 
 #[derive(Queryable)]
 pub struct Weather {
-    pub id: sql_types::Uuid,
-    pub location: sql_types::Point,
-    pub timestamp: sql_types::Date,
+    pub id: Uuid,
+    pub location: Point,
+    pub timestamp: Timestamp,
 }
 
 #[derive(Queryable)]
 pub struct WaterLevel {
-    pub id: sql_types::Uuid,
-    pub location: sql_types::Point,
-    pub timestamp: sql_types::Date,
-    pub weather_id: sql_types::Uuid,
+    pub id: Uuid,
+    pub location: Point,
+    pub timestamp: Timestamp,
+    pub weather_id: Uuid,
     pub level: i8,
 }
 
 #[derive(Queryable)]
 pub struct Config {
-    pub key: str,
-    pub value: str,
+    pub key: String,
+    pub value: String,
 }
 
 #[derive(Queryable)]
 pub struct Webhook {
-    pub id: sql_types::Uuid,
-    pub url: str,
-    pub last_sent: sql_types::Date,
-    pub event: str,
+    pub id: Uuid,
+    pub url: String,
+    pub last_sent: Timestamp,
+    pub event: String,
 }
