@@ -13,14 +13,14 @@ pub struct Weather {
     pub timestamp: NaiveDateTime,
 }
 
-#[derive(Insertable, Queryable, Associations, Identifiable, Debug)]
+#[derive(Insertable, Queryable, AsChangeset, Associations, Identifiable, Debug)]
 #[belongs_to(Weather)]
 #[table_name="water_levels"]
 pub struct WaterLevel {
     pub id: Uuid,
     pub location: PgPoint,
     pub timestamp: NaiveDateTime,
-    pub weather_id: Uuid,
+    pub weather_id: Option<Uuid>,
     pub level: f64,
 }
 

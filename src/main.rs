@@ -2,6 +2,7 @@
 extern crate rocket;
 #[macro_use]
 extern crate diesel;
+extern crate dotenv;
 
 mod routes {
     pub mod analytics;
@@ -9,17 +10,19 @@ mod routes {
     pub mod waterlevel;
     pub mod webhooks;
 }
-
 pub mod models;
 pub mod schema;
 
-use routes::*;
+use diesel::pg::PgConnection;
+use diesel::prelude::*;
+use dotenv::dotenv;
+use std::env;
 
 #[launch]
 fn rocket() -> _ {
     rocket::build()
         .mount("/api/v1/health", routes![health])
-        .mount("/api/v1/analytics", routes![analytics::get_default])
+        .mount("/api/v1/analytics", routes![routes::analytics::get_default])
         .mount(
             "/api/v1/config",
             routes![
@@ -47,6 +50,13 @@ fn rocket() -> _ {
                 routes::webhooks::modify
             ],
         )
+}
+
+pub fn establish_connection() -> PgConnection {
+    dotenv().ok();
+
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    PgConnection::establish(&database_url).expect(&format!("Error connecting to {}", database_url))
 }
 
 #[get("/")]
