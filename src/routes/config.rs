@@ -4,14 +4,14 @@ use crate::models::Config;
 use crate::diesel::prelude::*;
 use crate::schema::config::table;
 
-#[get("/")]
+#[get("/", format = "json")]
 pub fn get_all() {
     let connection = crate::establish_connection();
     table.load::<Config>(&connection)
         .expect("Error loading config");
 }
 
-#[get("/<key>")]
+#[get("/<key>", format = "json")]
 pub fn get_value(key: &str) -> Result<Json<Vec<Config>>, Status> {
     use crate::schema::config::table;
     crate::get_by_id::<table, Config, &str>(table, key)

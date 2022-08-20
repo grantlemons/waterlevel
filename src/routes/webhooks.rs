@@ -4,7 +4,7 @@ use crate::diesel::prelude::*;
 use crate::models::Webhook;
 use crate::schema::webhooks::table;
 
-#[get("/")]
+#[get("/", format = "json")]
 pub fn get() -> Result<Json<Vec<Webhook>>, Status> {
     let connection = crate::establish_connection();
     let resp = table.load::<Webhook>(&connection);
