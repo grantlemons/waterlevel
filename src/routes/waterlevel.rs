@@ -5,14 +5,14 @@ use crate::diesel::prelude::*;
 use crate::models::WaterLevel;
 use crate::schema::water_levels::{dsl, table};
 
-#[get("/", format = "json")]
+#[get("/")]
 pub fn get_all() -> Result<Json<Vec<WaterLevel>>, Status> {
     use crate::schema::water_levels::table;
     crate::get_all::<table, WaterLevel>(table)
 }
 
 /// Gets all data recorded on a certain date
-#[get("/date/<date>", format = "json")]
+#[get("/date/<date>")]
 pub fn get_on_date(date: &str) -> Result<Json<WaterLevel>, Status> {
     // Gives different responses depending on the validity of the passed date
     match NaiveDate::parse_from_str(&date, "%Y-%m-%d") {
@@ -46,7 +46,7 @@ pub fn get_on_date(date: &str) -> Result<Json<WaterLevel>, Status> {
     }
 }
 
-#[get("/level/at/<level>", format = "json")]
+#[get("/level/at/<level>")]
 pub fn get_at_level(level: f32) {
     let connection = crate::establish_connection();
     table
@@ -55,7 +55,7 @@ pub fn get_at_level(level: f32) {
         .expect("Error loading config");
 }
 
-#[get("/level/above/<level>", format = "json")]
+#[get("/level/above/<level>")]
 pub fn get_above_level(level: f32) {
     let connection = crate::establish_connection();
     table
@@ -64,7 +64,7 @@ pub fn get_above_level(level: f32) {
         .expect("Error loading config");
 }
 
-#[get("/level/below/<level>", format = "json")]
+#[get("/level/below/<level>")]
 pub fn get_below_level(level: f32) {
     let connection = crate::establish_connection();
     table
