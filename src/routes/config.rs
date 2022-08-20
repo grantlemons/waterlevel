@@ -1,9 +1,8 @@
-use rocket::serde::json::Json;
+use rocket::{serde::json::Json, http::Status};
 
 use crate::models::Config;
 use crate::diesel::prelude::*;
 use crate::schema::config::table;
-use crate::schema::config::columns;
 
 #[get("/")]
 pub fn get_all() {
@@ -13,12 +12,9 @@ pub fn get_all() {
 }
 
 #[get("/<key>")]
-pub fn get_value(key: &str) {
-    let connection = crate::establish_connection();
-    table.limit(1)
-        .filter(columns::key.eq(key))
-        .load::<Config>(&connection)
-        .expect("Error loading config");
+pub fn get_value(key: &str) -> Result<Json<Vec<Config>>, Status> {
+    use crate::schema::config::table;
+    crate::get_by_id::<table, Config, &str>(table, key)
 }
 
 #[derive(serde::Deserialize)]

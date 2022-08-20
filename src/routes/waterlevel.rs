@@ -8,7 +8,10 @@ use crate::schema::water_levels::columns;
 use crate::schema::water_levels::table;
 
 #[get("/")]
-pub fn get_all() {}
+pub fn get_all() -> Result<Json<Vec<WaterLevel>>, Status> {
+    use crate::schema::water_levels::table;
+    crate::get_all::<table, WaterLevel>(table)
+}
 
 /// Gets all data recorded on a certain date
 #[get("/date/<date>")]
