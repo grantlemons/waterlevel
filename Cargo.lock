@@ -180,6 +180,7 @@ dependencies = [
  "js-sys",
  "num-integer",
  "num-traits",
+ "serde",
  "time 0.1.44",
  "wasm-bindgen",
  "winapi",
@@ -313,6 +314,7 @@ checksum = "9cbfd34cd233cc0f363875f1acd8e40e119d5c5e69eb99ffe9639f2596310b16"
 dependencies = [
  "byteorder",
  "diesel",
+ "serde",
 ]
 
 [[package]]
@@ -1515,6 +1517,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bc5cf98d8186244414c848017f0e2676b3fcb46807f6668a97dfe67359a3c4b7"
 dependencies = [
  "getrandom",
+ "serde",
 ]
 
 [[package]]
