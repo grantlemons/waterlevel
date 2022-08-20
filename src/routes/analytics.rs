@@ -1,2 +1,2 @@
-#[get("/", format = "json")]
+#[get("/")]
 pub fn get_default() {}
