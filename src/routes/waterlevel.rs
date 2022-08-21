@@ -5,9 +5,10 @@ use crate::diesel::prelude::*;
 use crate::models::WaterLevel;
 use crate::schema::water_levels::{dsl, table};
 
+use crate::lib::*;
+
 #[get("/")]
 pub fn get_all() -> Result<Json<Vec<WaterLevel>>, Status> {
-    use crate::schema::water_levels::table;
     crate::lib::get_all::<table, WaterLevel>(table)
 }
 
@@ -19,11 +20,11 @@ pub fn get_on_date(date: &str) -> Result<Json<Vec<WaterLevel>>, Status> {
         Ok(date) => {
             log!(Level::Info, "inputted date is {}", &date);
 
-            let connection = crate::lib::establish_connection();
+            let connection = establish_connection();
 
             //TODO: Restrict to entries that match day
             let res = table.load::<WaterLevel>(&connection);
-            crate::lib::get_json_vec(res, None)
+            get_json_vec(res, None)
         }
         Err(e) => {
             rocket::log::private::log!(
@@ -38,8 +39,8 @@ pub fn get_on_date(date: &str) -> Result<Json<Vec<WaterLevel>>, Status> {
 
 #[get("/level/at/<level>")]
 pub fn get_at_level(level: f32) -> Result<Json<Vec<WaterLevel>>, Status> {
-    let connection = crate::lib::establish_connection();
-    crate::lib::get_json_vec(
+    let connection = establish_connection();
+    get_json_vec(
         table
             .filter(dsl::level.eq(level as f64))
             .load::<WaterLevel>(&connection),
@@ -49,8 +50,8 @@ pub fn get_at_level(level: f32) -> Result<Json<Vec<WaterLevel>>, Status> {
 
 #[get("/level/above/<level>")]
 pub fn get_above_level(level: f32) -> Result<Json<Vec<WaterLevel>>, Status> {
-    let connection = crate::lib::establish_connection();
-    crate::lib::get_json_vec(
+    let connection = establish_connection();
+    get_json_vec(
         table
             .filter(dsl::level.gt(level as f64))
             .load::<WaterLevel>(&connection),
@@ -60,8 +61,8 @@ pub fn get_above_level(level: f32) -> Result<Json<Vec<WaterLevel>>, Status> {
 
 #[get("/level/below/<level>")]
 pub fn get_below_level(level: f32) -> Result<Json<Vec<WaterLevel>>, Status> {
-    let connection = crate::lib::establish_connection();
-    crate::lib::get_json_vec(
+    let connection = establish_connection();
+    get_json_vec(
         table
             .filter(dsl::level.eq(level as f64))
             .load::<WaterLevel>(&connection),

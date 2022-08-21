@@ -4,8 +4,10 @@ use crate::diesel::prelude::*;
 use crate::models::Webhook;
 use crate::schema::webhooks::table;
 
+use crate::lib::*;
+
 #[get("/")]
-pub fn get() -> Result<Json<Vec<Webhook>>, Status> {
+pub fn get_all() -> Result<Json<Vec<Webhook>>, Status> {
     crate::lib::get_all::<table, Webhook>(table)
 }
 
@@ -19,7 +21,7 @@ pub struct Input {
 //TODO: Change behavior to only update rows
 #[put("/", format = "json", data = "<data>")]
 pub fn create(data: Json<Input>) -> Result<Json<Webhook>, Status> {
-    let connection = crate::lib::establish_connection();
+    let connection = establish_connection();
     let new_config = Webhook {
         id: uuid::Uuid::new_v4(),
         url: data.url.clone(),
@@ -27,7 +29,7 @@ pub fn create(data: Json<Input>) -> Result<Json<Webhook>, Status> {
         event: data.event.clone(),
     };
 
-    crate::lib::get_json::<Webhook>(
+    get_json::<Webhook>(
         diesel::insert_into(table)
             .values(&new_config)
             .get_results::<Webhook>(&connection),
@@ -37,9 +39,9 @@ pub fn create(data: Json<Input>) -> Result<Json<Webhook>, Status> {
 
 #[put("/<id>", format = "json", data = "<data>")]
 pub fn modify(id: &str, data: Json<Input>) -> Result<Json<Webhook>, Status> {
-    let connection = crate::lib::establish_connection();
+    let connection = establish_connection();
     match uuid::Uuid::parse_str(id) {
-        Ok(id) => crate::lib::get_json::<Webhook>(
+        Ok(id) => get_json::<Webhook>(
             diesel::insert_into(table)
                 .values(Webhook {
                     id,

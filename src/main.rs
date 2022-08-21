@@ -41,7 +41,7 @@ fn rocket() -> _ {
         .mount(
             "/api/v1/webhooks",
             routes![
-                routes::webhooks::get,
+                routes::webhooks::get_all,
                 routes::webhooks::create,
                 routes::webhooks::modify
             ],
