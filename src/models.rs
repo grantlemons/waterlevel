@@ -1,13 +1,13 @@
 use diesel::*;
 
-use diesel_geometry::pg::data_types::PgPoint;
-use chrono::NaiveDateTime;
-use uuid::Uuid;
 use crate::schema::*;
-use serde::{Serialize};
+use chrono::NaiveDateTime;
+use diesel_geometry::pg::data_types::PgPoint;
+use serde::Serialize;
+use uuid::Uuid;
 
 #[derive(Serialize, Insertable, Queryable, AsChangeset, Associations, Identifiable, Debug)]
-#[table_name="weather"]
+#[table_name = "weather"]
 pub struct Weather {
     pub id: Uuid,
     pub location: PgPoint,
@@ -16,7 +16,7 @@ pub struct Weather {
 
 #[derive(Serialize, Insertable, Queryable, AsChangeset, Associations, Identifiable, Debug)]
 #[belongs_to(Weather)]
-#[table_name="water_levels"]
+#[table_name = "water_levels"]
 pub struct WaterLevel {
     pub id: Uuid,
     pub location: PgPoint,
@@ -27,7 +27,7 @@ pub struct WaterLevel {
 
 #[derive(Serialize, Insertable, Queryable, AsChangeset, Identifiable, Debug)]
 #[primary_key(key)]
-#[table_name="config"]
+#[table_name = "config"]
 pub struct Config {
     pub key: String,
     pub value: String,
@@ -35,7 +35,7 @@ pub struct Config {
 }
 
 #[derive(Serialize, Insertable, Queryable, AsChangeset, Identifiable, Debug)]
-#[table_name="webhooks"]
+#[table_name = "webhooks"]
 pub struct Webhook {
     pub id: Uuid,
     pub url: String,
