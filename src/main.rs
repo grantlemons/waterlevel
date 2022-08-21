@@ -2,6 +2,7 @@
 extern crate rocket;
 #[macro_use]
 extern crate diesel;
+extern crate dotenv;
 
 mod routes {
     pub mod analytics;
@@ -9,17 +10,15 @@ mod routes {
     pub mod waterlevel;
     pub mod webhooks;
 }
-
+pub mod lib;
 pub mod models;
 pub mod schema;
-
-use routes::*;
 
 #[launch]
 fn rocket() -> _ {
     rocket::build()
         .mount("/api/v1/health", routes![health])
-        .mount("/api/v1/analytics", routes![analytics::get_default])
+        .mount("/api/v1/analytics", routes![routes::analytics::get_default])
         .mount(
             "/api/v1/config",
             routes![
@@ -42,7 +41,7 @@ fn rocket() -> _ {
         .mount(
             "/api/v1/webhooks",
             routes![
-                routes::webhooks::get,
+                routes::webhooks::get_all,
                 routes::webhooks::create,
                 routes::webhooks::modify
             ],
@@ -51,5 +50,6 @@ fn rocket() -> _ {
 
 #[get("/")]
 fn health() -> &'static str {
+    lib::establish_connection(); // check connection to db
     "Healthy!"
 }
