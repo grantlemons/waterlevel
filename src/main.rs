@@ -50,5 +50,6 @@ fn rocket() -> _ {
 
 #[get("/")]
 fn health() -> &'static str {
+    lib::establish_connection(); // check connection to db
     "Healthy!"
 }

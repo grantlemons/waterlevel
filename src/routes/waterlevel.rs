@@ -9,7 +9,8 @@ use crate::lib::*;
 
 #[get("/")]
 pub fn get_all() -> Result<Json<Vec<WaterLevel>>, Status> {
-    crate::lib::get_all::<table, WaterLevel>(table)
+    let connection = establish_connection();
+    get_json_vec(table.load::<WaterLevel>(&connection), None)
 }
 
 /// Gets all data recorded on a certain date

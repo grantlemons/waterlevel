@@ -8,7 +8,8 @@ use crate::lib::*;
 
 #[get("/")]
 pub fn get_all() -> Result<Json<Vec<Webhook>>, Status> {
-    crate::lib::get_all::<table, Webhook>(table)
+    let connection = establish_connection();
+    get_json_vec(table.load::<Webhook>(&connection), None)
 }
 
 // Struct for input to functions that need it

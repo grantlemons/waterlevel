@@ -6,30 +6,16 @@ pub fn establish_connection() -> diesel::pg::PgConnection {
     dotenv().ok();
 
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    diesel::pg::PgConnection::establish(&database_url)
-        .expect(&format!("Error connecting to {}", database_url))
-}
-
-pub fn get_all<Table, Model>(
-    table: Table,
-) -> Result<rocket::serde::json::Json<Vec<Model>>, rocket::http::Status>
-where
-    Table: diesel::query_dsl::LoadQuery<diesel::pg::PgConnection, Model>,
-{
-    let connection = establish_connection();
-    get_json_vec(table.load::<Model>(&connection), None)
-}
-
-pub fn get_by_id<Table, Model, PK>(
-    table: Table,
-    id: PK,
-) -> Result<rocket::serde::json::Json<Model>, rocket::http::Status>
-where
-    Table: diesel::query_dsl::methods::FindDsl<PK>,
-    Table::Output: diesel::query_dsl::LoadQuery<diesel::pg::PgConnection, Model>,
-{
-    let connection = establish_connection();
-    get_json(table.find(id).load::<Model>(&connection), None)
+    match diesel::pg::PgConnection::establish(&database_url) {
+        Ok(v) => v,
+        Err(_) => {
+            rocket::log::private::log!(
+                rocket::log::private::Level::Error,
+                "Unable to connect to Database!"
+            );
+            panic!("Unable to connect to Database!");
+        }
+    }
 }
 
 pub fn get_json<Model>(

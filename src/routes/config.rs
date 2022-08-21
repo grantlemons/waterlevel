@@ -16,7 +16,8 @@ pub fn get_all() {
 
 #[get("/<key>")]
 pub fn get_value(key: &str) -> Result<Json<Config>, Status> {
-    get_by_id::<table, Config, &str>(table, key)
+    let connection = establish_connection();
+    get_json(table.find(key).load::<Config>(&connection), None)
 }
 
 #[derive(serde::Deserialize)]
