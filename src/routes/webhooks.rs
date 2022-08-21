@@ -19,8 +19,7 @@ pub struct Input {
     event: String,
 }
 
-//TODO: Change behavior to only update rows
-#[put("/", format = "json", data = "<data>")]
+#[post("/", format = "json", data = "<data>")]
 pub fn create(data: Json<Input>) -> Result<Json<Webhook>, Status> {
     let connection = establish_connection();
     let new_config = Webhook {

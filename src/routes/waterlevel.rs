@@ -1,4 +1,3 @@
-use chrono::NaiveDate;
 use rocket::{http::Status, log::private::log, log::private::Level, serde::json::Json};
 
 use crate::diesel::prelude::*;
@@ -17,7 +16,7 @@ pub fn get_all() -> Result<Json<Vec<WaterLevel>>, Status> {
 #[get("/date/<date>")]
 pub fn get_on_date(date: &str) -> Result<Json<Vec<WaterLevel>>, Status> {
     // Gives different responses depending on the validity of the passed date
-    match NaiveDate::parse_from_str(&date, "%Y-%m-%d") {
+    match chrono::NaiveDate::parse_from_str(&date, "%Y-%m-%d") {
         Ok(date) => {
             log!(Level::Info, "inputted date is {}", &date);
 
@@ -67,6 +66,34 @@ pub fn get_below_level(level: f32) -> Result<Json<Vec<WaterLevel>>, Status> {
         table
             .filter(dsl::level.lt(level as f64))
             .load::<WaterLevel>(&connection),
+        None,
+    )
+}
+
+#[derive(serde::Deserialize)]
+pub struct Input {
+    location: diesel_geometry::data_types::PgPoint,
+    level: f64,
+}
+
+#[post("/", format = "json", data = "<data>")]
+pub fn add_waterlevel(data: Json<Input>) -> Result<Json<WaterLevel>, Status> {
+    let connection = establish_connection();
+
+    //TODO: GET WEATHER DATA
+    let weather_id = uuid::Uuid::new_v4();
+
+    let new_waterlevel = WaterLevel {
+        id: uuid::Uuid::new_v4(),
+        location: data.location,
+        timestamp: chrono::Utc::now().naive_utc(),
+        weather_id: Some(weather_id),
+        level: data.level,
+    };
+    get_json::<WaterLevel>(
+        diesel::insert_into(table)
+            .values(&new_waterlevel)
+            .get_results::<WaterLevel>(&connection),
         None,
     )
 }

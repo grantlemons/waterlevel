@@ -35,7 +35,8 @@ fn rocket() -> _ {
                 routes::waterlevel::get_on_date,
                 routes::waterlevel::get_at_level,
                 routes::waterlevel::get_above_level,
-                routes::waterlevel::get_below_level
+                routes::waterlevel::get_below_level,
+                routes::waterlevel::add_waterlevel,
             ],
         )
         .mount(
