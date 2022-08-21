@@ -65,7 +65,7 @@ pub fn get_below_level(level: f32) -> Result<Json<Vec<WaterLevel>>, Status> {
     let connection = establish_connection();
     get_json_vec(
         table
-            .filter(dsl::level.eq(level as f64))
+            .filter(dsl::level.lt(level as f64))
             .load::<WaterLevel>(&connection),
         None,
     )
