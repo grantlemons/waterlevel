@@ -90,10 +90,7 @@ where
     match table.find(id).load::<Model>(&connection) {
         Ok(v) => Ok(rocket::serde::json::Json(v)),
         Err(_) => {
-            rocket::log::private::log!(
-                rocket::log::private::Level::Error,
-                "Unable to get record!"
-            );
+            rocket::log::private::log!(rocket::log::private::Level::Error, "Unable to get record!");
             Err(rocket::http::Status::InternalServerError)
         }
     }
