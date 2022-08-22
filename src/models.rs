@@ -12,6 +12,11 @@ pub struct Weather {
     pub id: Uuid,
     pub location: PgPoint,
     pub timestamp: NaiveDateTime,
+    pub temp: f64,
+    pub temp_min: f64,
+    pub temp_max: f64,
+    pub pressure: f64,
+    pub humidity: i16,
 }
 
 #[derive(Serialize, Insertable, Queryable, AsChangeset, Associations, Identifiable, Debug)]

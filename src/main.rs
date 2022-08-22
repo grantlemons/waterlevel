@@ -2,7 +2,7 @@
 extern crate rocket;
 #[macro_use]
 extern crate diesel;
-extern crate dotenv;
+extern crate dotenv_codegen;
 
 mod routes {
     pub mod analytics;

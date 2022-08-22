@@ -1,7 +1,7 @@
 use rocket::{http::Status, log::private::log, log::private::Level, serde::json::Json};
 
 use crate::diesel::prelude::*;
-use crate::models::WaterLevel;
+use crate::models::{WaterLevel, Weather};
 use crate::schema::water_levels::{dsl, table};
 
 use crate::lib::*;
@@ -72,22 +72,23 @@ pub fn get_below_level(level: f32) -> Result<Json<Vec<WaterLevel>>, Status> {
 
 #[derive(serde::Deserialize)]
 pub struct Input {
-    location: diesel_geometry::data_types::PgPoint,
+    location: (f64, f64),
     level: f64,
 }
 
 #[post("/", format = "json", data = "<data>")]
-pub fn add_waterlevel(data: Json<Input>) -> Result<Json<WaterLevel>, Status> {
+pub async fn add_waterlevel(data: Json<Input>) -> Result<Json<WaterLevel>, Status> {
     let connection = establish_connection();
 
-    //TODO: GET WEATHER DATA
-    let weather_id = uuid::Uuid::new_v4();
+    let weather = get_weather(data.location.0, data.location.1)
+        .await
+        .expect("Unable to get weather data from third-party API");
 
     let new_waterlevel = WaterLevel {
         id: uuid::Uuid::new_v4(),
-        location: data.location,
+        location: diesel_geometry::data_types::PgPoint(data.location.0, data.location.1),
         timestamp: chrono::Utc::now().naive_utc(),
-        weather_id: Some(weather_id),
+        weather_id: Some(weather.id),
         level: data.level,
     };
     get_json::<WaterLevel>(
@@ -95,5 +96,43 @@ pub fn add_waterlevel(data: Json<Input>) -> Result<Json<WaterLevel>, Status> {
             .values(&new_waterlevel)
             .get_results::<WaterLevel>(&connection),
         None,
+    )
+}
+
+#[derive(Debug, serde::Deserialize)]
+struct Response {
+    main: Data,
+    dt: i64,
+}
+
+#[derive(Debug, serde::Deserialize)]
+struct Data {
+    temp: f64,
+    temp_min: f64,
+    temp_max: f64,
+    pressure: f64,
+    humidity: i16,
+}
+
+async fn get_weather(lat: f64, lon: f64) -> Result<Weather, reqwest::Error> {
+    let url = format!("https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=imperial&appid={key}",
+        lat = lat,
+        lon = lon,
+        key = dotenv_codegen::dotenv!("WEATHER_API_KEY")
+    );
+    let response = reqwest::get(&url).await?;
+    let json: Response = response.json().await?;
+    let data: Data = json.main;
+    Ok(
+        Weather {
+            id: uuid::Uuid::new_v4(),
+            location: diesel_geometry::data_types::PgPoint(lat, lon),
+            timestamp: chrono::NaiveDateTime::from_timestamp(json.dt, 0),
+            temp: data.temp,
+            temp_min: data.temp_min,
+            temp_max: data.temp_max,
+            pressure: data.pressure,
+            humidity: data.humidity,
+        }
     )
 }
