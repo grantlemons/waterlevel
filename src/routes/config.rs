@@ -22,8 +22,8 @@ pub fn get_value(key: &str) -> Result<Json<Config>, Status> {
 
 #[derive(serde::Deserialize)]
 pub struct Input {
-    key: String,
-    value: String,
+    pub key: String,
+    pub value: String,
 }
 
 #[post("/", format = "json", data = "<data>")]

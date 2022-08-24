@@ -15,8 +15,8 @@ pub fn get_all() -> Result<Json<Vec<Webhook>>, Status> {
 // Struct for input to functions that need it
 #[derive(serde::Deserialize)]
 pub struct Input {
-    url: String,
-    event: String,
+    pub url: String,
+    pub event: String,
 }
 
 //TODO: Change behavior to only update rows
