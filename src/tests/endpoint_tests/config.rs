@@ -1,4 +1,4 @@
-use crate::routes::config;
+// use crate::routes::config;
 use crate::routes::config::Input;
 
 #[test]
@@ -16,4 +16,9 @@ fn test_create() {
 }
 
 #[test]
-fn test_modify() {}
+fn test_modify() {
+    let data = Input {
+        key: String::from(""),
+        value: String::from(""),
+    };
+}
