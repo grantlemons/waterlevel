@@ -26,6 +26,8 @@ table! {
         temp_max -> Float8,
         pressure -> Float8,
         humidity -> SmallInt,
+        weather_id -> SmallInt,
+        weather_name -> Bpchar,
     }
 }
 

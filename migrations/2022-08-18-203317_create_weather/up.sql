@@ -7,5 +7,7 @@ CREATE TABLE weather (
     temp_min float8 NOT NULL,
     temp_max float8 NOT NULL,
     pressure float8 NOT NULL,
-    humidity smallint NOT NULL
+    humidity smallint NOT NULL,
+    weather_id smallint NOT NULL,
+    weather_name char(256) NOT NULL
 );

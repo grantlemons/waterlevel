@@ -101,6 +101,7 @@ pub async fn add_waterlevel(data: Json<Input>) -> Result<Json<WaterLevel>, Statu
 
 #[derive(Debug, serde::Deserialize)]
 struct Response {
+    weather: WeatherData,
     main: Data,
     dt: i64,
 }
@@ -114,8 +115,9 @@ struct Data {
     humidity: i16,
 }
 
+#[derive(Debug, serde::Deserialize)]
 struct WeatherData {
-    id: i64,
+    id: i16,
     main: String,
 }
 
@@ -128,7 +130,7 @@ async fn get_weather(lat: f64, lon: f64) -> Result<Weather, reqwest::Error> {
     let response = reqwest::get(&url).await?;
     let json: Response = response.json().await?;
     let data: Data = json.main;
-    let weather_data: WeatherData = json.weather_data;
+    let weather_data: WeatherData = json.weather;
     Ok(
         Weather {
             id: uuid::Uuid::new_v4(),

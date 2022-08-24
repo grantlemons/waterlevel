@@ -17,6 +17,8 @@ pub struct Weather {
     pub temp_max: f64,
     pub pressure: f64,
     pub humidity: i16,
+    pub weather_id: i16,
+    pub weather_name: String,
 }
 
 #[derive(Serialize, Insertable, Queryable, AsChangeset, Associations, Identifiable, Debug)]
