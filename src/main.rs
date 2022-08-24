@@ -10,9 +10,20 @@ mod routes {
     pub mod waterlevel;
     pub mod webhooks;
 }
+
 pub mod lib;
 pub mod models;
 pub mod schema;
+
+#[cfg(test)]
+mod tests {
+    mod endpoint_tests {
+        pub mod analytics;
+        pub mod config;
+        pub mod waterlevel;
+        pub mod webhooks;
+    }
+}
 
 #[launch]
 fn rocket() -> _ {
