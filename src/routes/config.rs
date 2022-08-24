@@ -7,11 +7,9 @@ use crate::schema::config::table;
 use crate::lib::*;
 
 #[get("/")]
-pub fn get_all() {
+pub fn get_all() -> Result<Json<Vec<Config>>, Status> {
     let connection = establish_connection();
-    table
-        .load::<Config>(&connection)
-        .expect("Error loading config");
+    get_json_vec(table.load::<Config>(&connection), None)
 }
 
 #[get("/<key>")]
@@ -20,7 +18,7 @@ pub fn get_value(key: &str) -> Result<Json<Config>, Status> {
     get_json(table.find(key).load::<Config>(&connection), None)
 }
 
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Clone)]
 pub struct Input {
     pub key: String,
     pub value: String,

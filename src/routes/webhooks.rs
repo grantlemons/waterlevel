@@ -13,7 +13,7 @@ pub fn get_all() -> Result<Json<Vec<Webhook>>, Status> {
 }
 
 // Struct for input to functions that need it
-#[derive(serde::Deserialize)]
+#[derive(serde::Deserialize, Clone)]
 pub struct Input {
     pub url: String,
     pub event: String,
