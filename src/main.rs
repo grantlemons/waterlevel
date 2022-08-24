@@ -21,6 +21,7 @@ pub mod schema;
 
 #[cfg(test)]
 mod tests {
+    mod database_connection;
     mod endpoint_tests {
         pub mod analytics;
         pub mod config;
