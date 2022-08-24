@@ -1,7 +1,11 @@
+use diesel_migrations::embed_migrations;
+
 #[macro_use]
 extern crate rocket;
 #[macro_use]
 extern crate diesel;
+#[macro_use]
+extern crate diesel_migrations;
 extern crate dotenv;
 
 mod routes {
@@ -27,6 +31,12 @@ mod tests {
 
 #[launch]
 fn rocket() -> _ {
+    // Run database migrations
+    embed_migrations!();
+    embedded_migrations::run(&lib::establish_connection())
+        .expect("Unable to run migrations");
+    
+    // Create rocket routes
     rocket::build()
         .mount("/api/v1/health", routes![health])
         .mount("/api/v1/analytics", routes![routes::analytics::get_default])
