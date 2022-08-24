@@ -70,12 +70,15 @@ pub fn get_below_level(level: f32) -> Result<Json<Vec<WaterLevel>>, Status> {
     )
 }
 
+/// Body of post request sent to / endpoint
 #[derive(serde::Deserialize)]
 pub struct Input {
     location: (f64, f64),
     level: f64,
 }
 
+/// Adds new level and weather entry for the location given
+/// Used only by the IOT to record data into the API
 #[post("/", format = "json", data = "<data>")]
 pub async fn add_waterlevel(data: Json<Input>) -> Result<Json<WaterLevel>, Status> {
     let connection = establish_connection();
@@ -99,6 +102,7 @@ pub async fn add_waterlevel(data: Json<Input>) -> Result<Json<WaterLevel>, Statu
     )
 }
 
+/// Response fields retrieved from the OpenWeather API
 #[derive(Debug, serde::Deserialize)]
 struct Response {
     weather: WeatherData,
@@ -106,6 +110,8 @@ struct Response {
     dt: i64,
 }
 
+/// Temperature data from the OpenWeather API
+/// Made to nest within Response struct
 #[derive(Debug, serde::Deserialize)]
 struct Data {
     temp: f64,
@@ -115,12 +121,16 @@ struct Data {
     humidity: i16,
 }
 
+/// Weather data retrieved from the OpenWeather API
+/// Made to nest within Response struct
 #[derive(Debug, serde::Deserialize)]
 struct WeatherData {
     id: i16,
     main: String,
 }
 
+/// Gets weather from OpenWeather api for the passed location
+/// Called by add_waterlevel in order to get weather data at the location of the arduino measuring device
 async fn get_weather(lat: f64, lon: f64) -> Result<Weather, reqwest::Error> {
     let url = format!("https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=imperial&appid={key}",
         lat = lat,
