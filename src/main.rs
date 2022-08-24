@@ -15,8 +15,8 @@ pub mod lib;
 pub mod models;
 pub mod schema;
 
-#[cfg(test)]
 mod tests {
+    #[cfg(test)]
     mod endpoint_tests {
         pub mod analytics;
         pub mod config;
