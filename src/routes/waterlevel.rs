@@ -114,6 +114,11 @@ struct Data {
     humidity: i16,
 }
 
+struct WeatherData {
+    id: i64,
+    main: String,
+}
+
 async fn get_weather(lat: f64, lon: f64) -> Result<Weather, reqwest::Error> {
     let url = format!("https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=imperial&appid={key}",
         lat = lat,
@@ -123,6 +128,7 @@ async fn get_weather(lat: f64, lon: f64) -> Result<Weather, reqwest::Error> {
     let response = reqwest::get(&url).await?;
     let json: Response = response.json().await?;
     let data: Data = json.main;
+    let weather_data: WeatherData = json.weather_data;
     Ok(
         Weather {
             id: uuid::Uuid::new_v4(),
@@ -133,6 +139,8 @@ async fn get_weather(lat: f64, lon: f64) -> Result<Weather, reqwest::Error> {
             temp_max: data.temp_max,
             pressure: data.pressure,
             humidity: data.humidity,
+            weather_id: weather_data.id,
+            weather_name: weather_data.main,
         }
     )
 }
