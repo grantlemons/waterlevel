@@ -34,7 +34,7 @@ fn test_create() {
     let client = get_client();
     let response = client
         .post(uri!(webhooks::create))
-        // .body()
+        .body(bincode::serialize(&data).expect("Unable to serialize input"))
         .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }
@@ -48,7 +48,7 @@ fn test_modify() {
     let client = get_client();
     let response = client
         .put(uri!(webhooks::modify("2")))
-        // .body()
+        .body(bincode::serialize(&data).expect("Unable to serialize input"))
         .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }

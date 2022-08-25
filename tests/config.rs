@@ -1,7 +1,8 @@
 use waterlevel_backend::routes::config;
 use waterlevel_backend::routes::config::Input;
-use rocket::{http::Status, serde::json::Json, local::blocking::Client, uri};
+use rocket::{http::Status, local::blocking::Client, uri};
 use rocket;
+use bincode;
 
 fn get_client() -> Client {
     Client::tracked(waterlevel_backend::entrypoint()).expect("valid rocket instance")
@@ -35,7 +36,7 @@ fn test_create() {
     let response = client
         .post(uri!(config::create))
         .header(rocket::http::ContentType::JSON)
-        // .body(data)
+        .body(bincode::serialize(&data).expect("Unable to serialize input"))
         .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }
@@ -50,7 +51,7 @@ fn test_modify() {
     let response = client
         .put(uri!(config::modify("2")))
         .header(rocket::http::ContentType::JSON)
-        // .body(data)
+        .body(bincode::serialize(&data).expect("Unable to serialize input"))
         .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }

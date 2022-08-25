@@ -18,7 +18,7 @@ pub fn get_value(key: &str, db: &State<Database>) -> Result<Json<Config>, Status
     get_json(table.find(key).load::<Config>(&connection), None)
 }
 
-#[derive(serde::Deserialize, Clone)]
+#[derive(serde::Serialize, serde::Deserialize, Clone)]
 pub struct Input {
     pub key: String,
     pub value: String,
