@@ -1,6 +1,6 @@
 // use waterlevel_backend::routes::waterlevel::Input;
-use rocket::{http::Status, local::blocking::Client};
 use rocket;
+use rocket::{http::Status, local::blocking::Client};
 
 fn get_client() -> Client {
     Client::tracked(waterlevel_backend::entrypoint()).expect("valid rocket instance")
@@ -9,9 +9,7 @@ fn get_client() -> Client {
 #[test]
 fn test_get_all() {
     let client = get_client();
-    let response = client
-        .get("/api/v1/waterlevel/")
-        .dispatch();
+    let response = client.get("/api/v1/waterlevel/").dispatch();
     assert_eq!(response.status(), Status::Ok);
 }
 

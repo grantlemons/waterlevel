@@ -42,7 +42,11 @@ pub fn create(data: Json<Input>, db: &State<Database>) -> Result<Json<Vec<Config
 }
 
 #[put("/<key>", format = "json", data = "<data>")]
-pub fn modify(key: &str, data: Json<Input>, db: &State<Database>) -> Result<Json<Vec<Config>>, Status> {
+pub fn modify(
+    key: &str,
+    data: Json<Input>,
+    db: &State<Database>,
+) -> Result<Json<Vec<Config>>, Status> {
     let connection = get_connection(&db);
     let new_config = Config {
         key: String::from(key),

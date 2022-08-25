@@ -1,6 +1,6 @@
 #![allow(unused)]
-use rocket::{http::Status, serde::json::Json, State};
 use crate::helpers::*;
+use rocket::{http::Status, serde::json::Json, State};
 
 use crate::diesel::prelude::*;
 use crate::models::Config;

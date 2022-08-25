@@ -39,7 +39,11 @@ pub fn create(data: Json<Input>, db: &State<Database>) -> Result<Json<Vec<Webhoo
 }
 
 #[put("/<id>", format = "json", data = "<data>")]
-pub fn modify(id: &str, data: Json<Input>, db: &State<Database>) -> Result<Json<Vec<Webhook>>, Status> {
+pub fn modify(
+    id: &str,
+    data: Json<Input>,
+    db: &State<Database>,
+) -> Result<Json<Vec<Webhook>>, Status> {
     let connection = get_connection(&db);
     match uuid::Uuid::parse_str(id) {
         Ok(id) => get_json_vec::<Webhook>(
