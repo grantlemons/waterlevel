@@ -1,4 +1,4 @@
-use rocket::{http::Status, local::blocking::Client, uri};
+use rocket::{http::Status, local::blocking::Client};
 use rocket;
 
 fn get_client() -> Client {
@@ -9,7 +9,7 @@ fn get_client() -> Client {
 fn test_health() {
     let client = get_client();
     let response = client
-        .get(uri!(waterlevel_backend::health))
+        .get("/health/")
         .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }

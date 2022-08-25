@@ -1,6 +1,5 @@
-use waterlevel_backend::routes::webhooks;
 use waterlevel_backend::routes::webhooks::Input;
-use rocket::{http::Status, local::blocking::Client, uri};
+use rocket::{http::Status, local::blocking::Client};
 use rocket;
 
 fn get_client() -> Client {
@@ -11,16 +10,16 @@ fn get_client() -> Client {
 fn test_get_all() {
     let client = get_client();
     let response = client
-        .get(uri!(webhooks::get_all))
+        .get("/api/v1/webhooks/")
         .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }
 
 // #[test]
-// fn test_get_by_id() -> Result<(), Status> {
+// fn test_get_by_id() {
     // let client = get_client();
     // let response = client
-    // .get(uri!(waterlevel::get_all))
+    // .get(format!("/api/v1/webhooks/{}", 2))
     // .dispatch();
     // assert_eq!(response.status(), Status::Ok);
 // }
@@ -33,7 +32,7 @@ fn test_create() {
     };
     let client = get_client();
     let response = client
-        .post(uri!(webhooks::create))
+        .post("/api/v1/webhooks/")
         .body(bincode::serialize(&data).expect("Unable to serialize input"))
         .dispatch();
     assert_eq!(response.status(), Status::Ok);
@@ -47,7 +46,7 @@ fn test_modify() {
     };
     let client = get_client();
     let response = client
-        .put(uri!(webhooks::modify("2")))
+        .put(format!("/api/v1/webhooks/{}", 2))
         .body(bincode::serialize(&data).expect("Unable to serialize input"))
         .dispatch();
     assert_eq!(response.status(), Status::Ok);

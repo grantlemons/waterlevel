@@ -1,6 +1,5 @@
-use waterlevel_backend::routes::config;
 use waterlevel_backend::routes::config::Input;
-use rocket::{http::Status, local::blocking::Client, uri};
+use rocket::{http::Status, local::blocking::Client};
 use rocket;
 use bincode;
 
@@ -12,7 +11,7 @@ fn get_client() -> Client {
 fn test_get_all() {
     let client = get_client();
     let response = client
-        .get(uri!(config::get_all))
+        .get("/api/v1/config/")
         .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }
@@ -21,7 +20,7 @@ fn test_get_all() {
 fn test_get_value() {
     let client = get_client();
     let response = client
-        .get(uri!(config::get_value("2")))
+        .get(format!("/api/v1/config/{}", 2))
         .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }
@@ -34,7 +33,7 @@ fn test_create() {
     };
     let client = get_client();
     let response = client
-        .post(uri!(config::create))
+        .post("/api/v1/config/")
         .header(rocket::http::ContentType::JSON)
         .body(bincode::serialize(&data).expect("Unable to serialize input"))
         .dispatch();
@@ -49,7 +48,7 @@ fn test_modify() {
     };
     let client = get_client();
     let response = client
-        .put(uri!(config::modify("2")))
+        .put(format!("/api/v1/config/{}", 2))
         .header(rocket::http::ContentType::JSON)
         .body(bincode::serialize(&data).expect("Unable to serialize input"))
         .dispatch();
