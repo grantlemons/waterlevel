@@ -1,4 +1,4 @@
-use rocket::{http::Status, serde::json::Json};
+use rocket::{http::Status, serde::json::Json, State};
 
 use crate::diesel::prelude::*;
 use crate::models::Config;
@@ -7,14 +7,14 @@ use crate::schema::config::table;
 use crate::helpers::*;
 
 #[get("/")]
-pub fn get_all() -> Result<Json<Vec<Config>>, Status> {
-    let connection = establish_connection();
+pub fn get_all(db: &State<Database>) -> Result<Json<Vec<Config>>, Status> {
+    let connection = get_connection(&db);
     get_json_vec(table.load::<Config>(&connection), None)
 }
 
 #[get("/<key>")]
-pub fn get_value(key: &str) -> Result<Json<Config>, Status> {
-    let connection = establish_connection();
+pub fn get_value(key: &str, db: &State<Database>) -> Result<Json<Config>, Status> {
+    let connection = get_connection(&db);
     get_json(table.find(key).load::<Config>(&connection), None)
 }
 
@@ -25,8 +25,8 @@ pub struct Input {
 }
 
 #[post("/", format = "json", data = "<data>")]
-pub fn create(data: Json<Input>) -> Result<Json<Config>, Status> {
-    let connection = establish_connection();
+pub fn create(data: Json<Input>, db: &State<Database>) -> Result<Json<Config>, Status> {
+    let connection = get_connection(&db);
     let new_config = Config {
         key: data.key.clone(),
         value: data.value.clone(),
@@ -42,8 +42,8 @@ pub fn create(data: Json<Input>) -> Result<Json<Config>, Status> {
 }
 
 #[put("/<key>", format = "json", data = "<data>")]
-pub fn modify(key: &str, data: Json<Input>) -> Result<Json<Config>, Status> {
-    let connection = establish_connection();
+pub fn modify(key: &str, data: Json<Input>, db: &State<Database>) -> Result<Json<Config>, Status> {
+    let connection = get_connection(&db);
     let new_config = Config {
         key: String::from(key),
         value: data.value.clone(),

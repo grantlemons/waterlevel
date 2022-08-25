@@ -1,21 +1,22 @@
-use diesel::prelude::*;
+use diesel::r2d2::PooledConnection;
 use dotenv::dotenv;
 use std::env;
 
-pub fn establish_connection() -> diesel::pg::PgConnection {
+pub struct Database(pub ConnPool);
+
+pub type ConnPool = diesel::r2d2::Pool<PgConnManager>;
+pub type PgConnManager = diesel::r2d2::ConnectionManager<diesel::pg::PgConnection>;
+
+pub fn get_connection(db: &Database) -> PooledConnection<PgConnManager> {
+    db.0.get().expect("Unable to get connection from pool")
+}
+
+pub fn get_pool() -> ConnPool {
     dotenv().ok();
 
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    match diesel::pg::PgConnection::establish(&database_url) {
-        Ok(v) => v,
-        Err(_) => {
-            rocket::log::private::log!(
-                rocket::log::private::Level::Error,
-                "Unable to connect to Database!"
-            );
-            panic!("Unable to connect to Database!");
-        }
-    }
+    let manager: PgConnManager = diesel::r2d2::ConnectionManager::new(database_url);
+    diesel::r2d2::Pool::new(manager).expect("Unable to create connection pool")
 }
 
 pub fn get_json<Model>(

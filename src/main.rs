@@ -16,15 +16,22 @@ pub mod helpers;
 pub mod models;
 pub mod schema;
 
+use helpers::{Database, get_pool, get_connection};
+
 #[launch]
-fn rocket() -> _ {
+pub fn entrypoint() -> _ {
+    // Create database struct
+    let database = Database(get_pool());
+    let conn = get_connection(&database);
+
     // Run database migrations
     embed_migrations!();
-    embedded_migrations::run(&helpers::establish_connection())
+    embedded_migrations::run(&conn)
         .expect("Unable to run migrations");
     
     // Create rocket routes
     rocket::build()
+        .manage(database)
         .mount("/api/v1/health", routes![health])
         .mount("/api/v1/analytics", routes![routes::analytics::get_default])
         .mount(
@@ -57,7 +64,7 @@ fn rocket() -> _ {
 }
 
 #[get("/")]
-fn health() -> &'static str {
-    helpers::establish_connection(); // check connection to db
+fn health(db: &rocket::State<Database>) -> &'static str {
+    get_connection(&db); // check connection to db
     "Healthy!"
 }
