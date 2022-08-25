@@ -21,7 +21,7 @@ pub struct Input {
 
 //TODO: Change behavior to only update rows
 #[put("/", format = "json", data = "<data>")]
-pub fn create(data: Json<Input>, db: &State<Database>) -> Result<Json<Webhook>, Status> {
+pub fn create(data: Json<Input>, db: &State<Database>) -> Result<Json<Vec<Webhook>>, Status> {
     let connection = get_connection(&db);
     let new_config = Webhook {
         id: uuid::Uuid::new_v4(),
@@ -30,7 +30,7 @@ pub fn create(data: Json<Input>, db: &State<Database>) -> Result<Json<Webhook>, 
         event: data.event.clone(),
     };
 
-    get_json::<Webhook>(
+    get_json_vec::<Webhook>(
         diesel::insert_into(table)
             .values(&new_config)
             .get_results::<Webhook>(&connection),
@@ -39,10 +39,10 @@ pub fn create(data: Json<Input>, db: &State<Database>) -> Result<Json<Webhook>, 
 }
 
 #[put("/<id>", format = "json", data = "<data>")]
-pub fn modify(id: &str, data: Json<Input>, db: &State<Database>) -> Result<Json<Webhook>, Status> {
+pub fn modify(id: &str, data: Json<Input>, db: &State<Database>) -> Result<Json<Vec<Webhook>>, Status> {
     let connection = get_connection(&db);
     match uuid::Uuid::parse_str(id) {
-        Ok(id) => get_json::<Webhook>(
+        Ok(id) => get_json_vec::<Webhook>(
             diesel::insert_into(table)
                 .values(Webhook {
                     id,

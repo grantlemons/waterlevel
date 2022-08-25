@@ -19,23 +19,6 @@ pub fn get_pool() -> ConnPool {
     diesel::r2d2::Pool::new(manager).expect("Unable to create connection pool")
 }
 
-pub fn get_json<Model>(
-    res: Result<Vec<Model>, diesel::result::Error>,
-    log: Option<&'static str>,
-) -> Result<rocket::serde::json::Json<Model>, rocket::http::Status> {
-    match res {
-        Ok(mut v) => Ok(rocket::serde::json::Json(v.remove(0))),
-        Err(_) => {
-            let s = match log {
-                Some(s) => s,
-                None => "Unable to get/insert records!",
-            };
-            rocket::log::private::log!(rocket::log::private::Level::Error, "{}", s);
-            Err(rocket::http::Status::InternalServerError)
-        }
-    }
-}
-
 pub fn get_json_vec<Model>(
     res: Result<Vec<Model>, diesel::result::Error>,
     log: Option<&'static str>,
