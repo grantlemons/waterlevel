@@ -1,5 +1,3 @@
-use diesel_migrations::embed_migrations;
-
 #[macro_use]
 extern crate rocket;
 #[macro_use]
@@ -14,8 +12,7 @@ pub mod routes {
     pub mod waterlevel;
     pub mod webhooks;
 }
-
-pub mod lib;
+pub mod helpers;
 pub mod models;
 pub mod schema;
 
@@ -23,7 +20,7 @@ pub mod schema;
 fn rocket() -> _ {
     // Run database migrations
     embed_migrations!();
-    embedded_migrations::run(&lib::establish_connection())
+    embedded_migrations::run(&helpers::establish_connection())
         .expect("Unable to run migrations");
     
     // Create rocket routes
@@ -61,6 +58,6 @@ fn rocket() -> _ {
 
 #[get("/")]
 fn health() -> &'static str {
-    lib::establish_connection(); // check connection to db
+    helpers::establish_connection(); // check connection to db
     "Healthy!"
 }

@@ -4,7 +4,7 @@ use crate::diesel::prelude::*;
 use crate::models::Config;
 use crate::schema::config::table;
 
-use crate::lib::*;
+use crate::helpers::*;
 
 #[get("/")]
 pub fn get_all() -> Result<Json<Vec<Config>>, Status> {

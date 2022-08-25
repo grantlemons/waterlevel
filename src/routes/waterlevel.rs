@@ -5,7 +5,7 @@ use crate::diesel::prelude::*;
 use crate::models::WaterLevel;
 use crate::schema::water_levels::{dsl, table};
 
-use crate::lib::*;
+use crate::helpers::*;
 
 #[get("/")]
 pub fn get_all() -> Result<Json<Vec<WaterLevel>>, Status> {

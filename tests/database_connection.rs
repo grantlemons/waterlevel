@@ -1,4 +1,4 @@
-use waterlevel_backend::establish_connection;
+use waterlevel_backend::helpers::establish_connection;
 
 #[test]
 #[ignore]
