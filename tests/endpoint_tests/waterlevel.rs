@@ -1,5 +1,5 @@
-use crate::routes::waterlevel;
-// use crate::routes::waterlevel::Input;
+use waterlevel_backend::routes::waterlevel;
+// use waterlevel_backend::routes::waterlevel::Input;
 use rocket::{http::Status, serde::json::Json};
 
 #[test]

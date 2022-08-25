@@ -1,5 +1,5 @@
-use crate::routes::webhooks;
-use crate::routes::webhooks::Input;
+use waterlevel_backend::routes::webhooks;
+use waterlevel_backend::routes::webhooks::Input;
 use rocket::{http::Status, serde::json::Json};
 
 #[test]

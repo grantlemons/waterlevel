@@ -8,7 +8,7 @@ extern crate diesel;
 extern crate diesel_migrations;
 extern crate dotenv;
 
-mod routes {
+pub mod routes {
     pub mod analytics;
     pub mod config;
     pub mod waterlevel;
@@ -18,17 +18,6 @@ mod routes {
 pub mod lib;
 pub mod models;
 pub mod schema;
-
-#[cfg(test)]
-mod tests {
-    mod database_connection;
-    mod endpoint_tests {
-        pub mod analytics;
-        pub mod config;
-        pub mod waterlevel;
-        pub mod webhooks;
-    }
-}
 
 #[launch]
 fn rocket() -> _ {
