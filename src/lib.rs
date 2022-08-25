@@ -16,7 +16,7 @@ pub mod helpers;
 pub mod models;
 pub mod schema;
 
-use helpers::{Database, get_pool, get_connection};
+use helpers::{get_connection, get_pool, Database};
 
 #[launch]
 pub fn entrypoint() -> _ {
@@ -26,9 +26,9 @@ pub fn entrypoint() -> _ {
 
     // Run database migrations
     embed_migrations!();
-    embedded_migrations::run(&conn)
-        .expect("Unable to run migrations");
-    
+    if let Ok(_) = embedded_migrations::run(&conn) {
+        rocket::log::private::log!(rocket::log::private::Level::Info, "Ran migrations");
+    };
     // Create rocket routes
     rocket::build()
         .manage(database)
