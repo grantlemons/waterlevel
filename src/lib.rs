@@ -26,7 +26,7 @@ pub fn entrypoint() -> _ {
 
     // Run database migrations
     embed_migrations!();
-    if let Ok(_) = embedded_migrations::run(&conn) {
+    if embedded_migrations::run(&conn).is_ok() {
         rocket::log::private::log!(rocket::log::private::Level::Info, "Ran migrations");
     };
     // Create rocket routes
@@ -65,6 +65,6 @@ pub fn entrypoint() -> _ {
 
 #[get("/")]
 fn health(db: &rocket::State<Database>) -> &'static str {
-    get_connection(&db); // check connection to db
+    get_connection(db); // check connection to db
     "Healthy!"
 }

@@ -26,11 +26,7 @@ pub fn get_json_vec<Model>(
     match res {
         Ok(v) => Ok(rocket::serde::json::Json(v)),
         Err(_) => {
-            let s = match log {
-                Some(s) => s,
-                None => "Unable to get/insert records!",
-            };
-            rocket::log::private::log!(rocket::log::private::Level::Error, "{}", s);
+            rocket::log::private::log!(rocket::log::private::Level::Error, "{}", log.unwrap_or("Unable to get/insert records!"));
             Err(rocket::http::Status::InternalServerError)
         }
     }

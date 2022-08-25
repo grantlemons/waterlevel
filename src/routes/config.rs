@@ -8,13 +8,13 @@ use crate::helpers::*;
 
 #[get("/")]
 pub fn get_all(db: &State<Database>) -> Result<Json<Vec<Config>>, Status> {
-    let connection = get_connection(&db);
+    let connection = get_connection(db);
     get_json_vec(table.load::<Config>(&connection), None)
 }
 
 #[get("/<key>")]
 pub fn get_value(key: &str, db: &State<Database>) -> Result<Json<Vec<Config>>, Status> {
-    let connection = get_connection(&db);
+    let connection = get_connection(db);
     get_json_vec(table.find(key).load::<Config>(&connection), None)
 }
 
@@ -26,7 +26,7 @@ pub struct Input {
 
 #[post("/", format = "json", data = "<data>")]
 pub fn create(data: Json<Input>, db: &State<Database>) -> Result<Json<Vec<Config>>, Status> {
-    let connection = get_connection(&db);
+    let connection = get_connection(db);
     let new_config = Config {
         key: data.key.clone(),
         value: data.value.clone(),
@@ -47,7 +47,7 @@ pub fn modify(
     data: Json<Input>,
     db: &State<Database>,
 ) -> Result<Json<Vec<Config>>, Status> {
-    let connection = get_connection(&db);
+    let connection = get_connection(db);
     let new_config = Config {
         key: String::from(key),
         value: data.value.clone(),

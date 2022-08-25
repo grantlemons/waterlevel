@@ -1,4 +1,4 @@
-use rocket;
+
 use rocket::{http::Status, local::blocking::Client};
 
 fn get_client() -> Client {

@@ -8,7 +8,7 @@ use crate::helpers::*;
 
 #[get("/")]
 pub fn get_all(db: &State<Database>) -> Result<Json<Vec<Webhook>>, Status> {
-    let connection = get_connection(&db);
+    let connection = get_connection(db);
     get_json_vec(table.load::<Webhook>(&connection), None)
 }
 
@@ -22,7 +22,7 @@ pub struct Input {
 //TODO: Change behavior to only update rows
 #[put("/", format = "json", data = "<data>")]
 pub fn create(data: Json<Input>, db: &State<Database>) -> Result<Json<Vec<Webhook>>, Status> {
-    let connection = get_connection(&db);
+    let connection = get_connection(db);
     let new_config = Webhook {
         id: uuid::Uuid::new_v4(),
         url: data.url.clone(),
@@ -44,7 +44,7 @@ pub fn modify(
     data: Json<Input>,
     db: &State<Database>,
 ) -> Result<Json<Vec<Webhook>>, Status> {
-    let connection = get_connection(&db);
+    let connection = get_connection(db);
     match uuid::Uuid::parse_str(id) {
         Ok(id) => get_json_vec::<Webhook>(
             diesel::insert_into(table)

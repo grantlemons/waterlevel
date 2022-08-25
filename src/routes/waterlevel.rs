@@ -9,7 +9,7 @@ use crate::helpers::*;
 
 #[get("/")]
 pub fn get_all(db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
-    let connection = get_connection(&db);
+    let connection = get_connection(db);
     get_json_vec(table.load::<WaterLevel>(&connection), None)
 }
 
@@ -17,11 +17,11 @@ pub fn get_all(db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
 #[get("/date/<date>")]
 pub fn get_on_date(date: &str, db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
     // Gives different responses depending on the validity of the passed date
-    match NaiveDate::parse_from_str(&date, "%Y-%m-%d") {
+    match NaiveDate::parse_from_str(date, "%Y-%m-%d") {
         Ok(date) => {
             log!(Level::Info, "inputted date is {}", &date);
 
-            let connection = get_connection(&db);
+            let connection = get_connection(db);
 
             //TODO: Restrict to entries that match day
             let res = table.load::<WaterLevel>(&connection);
@@ -40,7 +40,7 @@ pub fn get_on_date(date: &str, db: &State<Database>) -> Result<Json<Vec<WaterLev
 
 #[get("/level/at/<level>")]
 pub fn get_at_level(level: f32, db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
-    let connection = get_connection(&db);
+    let connection = get_connection(db);
     get_json_vec(
         table
             .filter(dsl::level.eq(level as f64))
@@ -51,7 +51,7 @@ pub fn get_at_level(level: f32, db: &State<Database>) -> Result<Json<Vec<WaterLe
 
 #[get("/level/above/<level>")]
 pub fn get_above_level(level: f32, db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
-    let connection = get_connection(&db);
+    let connection = get_connection(db);
     get_json_vec(
         table
             .filter(dsl::level.gt(level as f64))
@@ -62,7 +62,7 @@ pub fn get_above_level(level: f32, db: &State<Database>) -> Result<Json<Vec<Wate
 
 #[get("/level/below/<level>")]
 pub fn get_below_level(level: f32, db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
-    let connection = get_connection(&db);
+    let connection = get_connection(db);
     get_json_vec(
         table
             .filter(dsl::level.lt(level as f64))
