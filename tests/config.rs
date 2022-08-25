@@ -1,55 +1,56 @@
 use waterlevel_backend::routes::config;
 use waterlevel_backend::routes::config::Input;
-use rocket::{http::Status, serde::json::Json};
+use rocket::{http::Status, serde::json::Json, local::blocking::Client, uri};
+use rocket;
 
-#[test]
-fn test_get_all() -> Result<(), Status> {
-    match config::get_all() {
-        Ok(_) => Ok(()),
-        Err(e) => Err(e)
-    }
+fn get_client() -> Client {
+    Client::tracked(waterlevel_backend::entrypoint()).expect("valid rocket instance")
 }
 
 #[test]
-fn test_get_value() -> Result<(), Status> {
-    match config::get_value("1") {
-        Ok(_) => Ok(()),
-        Err(e) => Err(e)
-    }
+fn test_get_all() {
+    let client = get_client();
+    let response = client
+        .get(uri!(config::get_all))
+        .dispatch();
+    assert_eq!(response.status(), Status::Ok);
 }
 
 #[test]
-fn test_create() -> Result<(), Status> {
+fn test_get_value() {
+    let client = get_client();
+    let response = client
+        .get(uri!(config::get_value("2")))
+        .dispatch();
+    assert_eq!(response.status(), Status::Ok);
+}
+
+#[test]
+fn test_create() {
     let data = Input {
         key: String::from(""),
         value: String::from(""),
     };
-    match config::create(Json(data.clone())) {
-        Ok(v) => {
-            assert_eq!(v.key, data.key);
-            assert_eq!(v.value, data.value);
-            Ok(())
-        },
-        Err(e) => {
-            Err(e)
-        }
-    }
+    let client = get_client();
+    let response = client
+        .post(uri!(config::create))
+        .header(rocket::http::ContentType::JSON)
+        // .body(data)
+        .dispatch();
+    assert_eq!(response.status(), Status::Ok);
 }
 
 #[test]
-fn test_modify() -> Result<(), Status> {
+fn test_modify() {
     let data = Input {
         key: String::from(""),
         value: String::from(""),
     };
-    match config::modify("1", Json(data.clone())) {
-        Ok(v) => {
-            assert_eq!(v.key, data.key);
-            assert_eq!(v.value, data.value);
-            Ok(())
-        },
-        Err(e) => {
-            Err(e)
-        }
-    }
+    let client = get_client();
+    let response = client
+        .put(uri!(config::modify("2")))
+        .header(rocket::http::ContentType::JSON)
+        // .body(data)
+        .dispatch();
+    assert_eq!(response.status(), Status::Ok);
 }

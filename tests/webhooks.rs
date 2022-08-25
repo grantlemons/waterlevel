@@ -1,55 +1,54 @@
 use waterlevel_backend::routes::webhooks;
 use waterlevel_backend::routes::webhooks::Input;
-use rocket::{http::Status, serde::json::Json};
+use rocket::{http::Status, local::blocking::Client, uri};
+use rocket;
+
+fn get_client() -> Client {
+    Client::tracked(waterlevel_backend::entrypoint()).expect("valid rocket instance")
+}
 
 #[test]
-fn test_get_all() -> Result<(), Status> {
-    match webhooks::get_all() {
-        Ok(_) => Ok(()),
-        Err(e) => Err(e)
-    }
+fn test_get_all() {
+    let client = get_client();
+    let response = client
+        .get(uri!(webhooks::get_all))
+        .dispatch();
+    assert_eq!(response.status(), Status::Ok);
 }
 
 // #[test]
 // fn test_get_by_id() -> Result<(), Status> {
-//     match webhooks::get_by_id("1") {
-//         Ok(_) => Ok(()),
-//         Err(e) => Err(e)
-//     }
+    // let client = get_client();
+    // let response = client
+    // .get(uri!(waterlevel::get_all))
+    // .dispatch();
+    // assert_eq!(response.status(), Status::Ok);
 // }
 
 #[test]
-fn test_create() -> Result<(), Status> {
+fn test_create() {
     let data = Input {
         url: String::from(""),
         event: String::from(""),
     };
-    match webhooks::create(Json(data.clone())) {
-        Ok(v) => {
-            assert_eq!(v.url, data.url);
-            assert_eq!(v.event, data.event);
-            Ok(())
-        },
-        Err(e) => {
-            Err(e)
-        }
-    }
+    let client = get_client();
+    let response = client
+        .post(uri!(webhooks::create))
+        // .body()
+        .dispatch();
+    assert_eq!(response.status(), Status::Ok);
 }
 
 #[test]
-fn test_modify() -> Result<(), Status> {
+fn test_modify() {
     let data = Input {
         url: String::from(""),
         event: String::from(""),
     };
-    match webhooks::modify("2", Json(data.clone())) {
-        Ok(v) => {
-            assert_eq!(v.url, data.url);
-            assert_eq!(v.event, data.event);
-            Ok(())
-        },
-        Err(e) => {
-            Err(e)
-        }
-    }
+    let client = get_client();
+    let response = client
+        .put(uri!(webhooks::modify("2")))
+        // .body()
+        .dispatch();
+    assert_eq!(response.status(), Status::Ok);
 }
