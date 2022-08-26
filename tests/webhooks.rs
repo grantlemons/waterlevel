@@ -6,24 +6,6 @@ fn get_client() -> Client {
 }
 
 #[test]
-fn test_get_all() {
-    let client = get_client();
-    let response = client
-        .get(waterlevel_backend::ROOT.to_owned() + "webhooks/")
-        .dispatch();
-    assert_eq!(response.status(), Status::Ok);
-}
-
-// #[test]
-// fn test_get_by_id() {
-// let client = get_client();
-// let response = client
-// .get(format!("/api/v1/webhooks/{}", 2))
-// .dispatch();
-// assert_eq!(response.status(), Status::Ok);
-// }
-
-#[test]
 fn test_create() {
     let data = Input {
         url: String::from(""),
@@ -38,6 +20,24 @@ fn test_create() {
 }
 
 #[test]
+fn test_get_all() {
+    let client = get_client();
+    let response = client
+        .get(waterlevel_backend::ROOT.to_owned() + "webhooks/")
+        .dispatch();
+    assert_eq!(response.status(), Status::Ok);
+}
+
+// #[test]
+// fn test_get_by_id() {
+// let client = get_client();
+// let response = client
+// .get(format!("/api/v1/webhooks/{}", 1))
+// .dispatch();
+// assert_eq!(response.status(), Status::Ok);
+// }
+
+#[test]
 fn test_modify() {
     let data = Input {
         url: String::from(""),
@@ -48,7 +48,7 @@ fn test_modify() {
         .put(format!(
             "{}webhooks/{}",
             waterlevel_backend::ROOT.to_owned(),
-            2
+            1
         ))
         .json(&data)
         .dispatch();

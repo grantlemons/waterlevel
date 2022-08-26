@@ -46,17 +46,21 @@ pub fn modify(
 ) -> Result<Json<Vec<Webhook>>, Status> {
     let connection = get_connection(db);
     match uuid::Uuid::parse_str(id) {
-        Ok(id) => get_json_vec::<Webhook>(
-            diesel::insert_into(table)
-                .values(Webhook {
-                    id,
-                    url: data.url.clone(),
-                    last_sent: None,
-                    event: data.event.clone(),
-                })
-                .get_results::<Webhook>(&connection),
-            None,
-        ),
+        Ok(id) => {
+            let new_config = Webhook {
+                id,
+                url: data.url.clone(),
+                last_sent: None,
+                event: data.event.clone(),
+            };
+            let target = table.find(id);
+            get_json_vec(
+                diesel::update(target)
+                    .set(&new_config)
+                    .get_results::<Webhook>(&connection),
+                None,
+            )
+        },
         Err(_) => {
             log!(Level::Error, "Unable to parse UUID!");
             Err(Status::BadRequest)

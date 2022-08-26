@@ -54,9 +54,10 @@ pub fn modify(
         timestamp: chrono::Utc::now().naive_utc(),
     };
 
+    let target = table.find(key);
     get_json_vec(
-        diesel::insert_into(table)
-            .values(&new_config)
+        diesel::update(target)
+            .set(&new_config)
             .get_results::<Config>(&connection),
         None,
     )

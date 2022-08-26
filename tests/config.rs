@@ -6,28 +6,6 @@ fn get_client() -> Client {
 }
 
 #[test]
-fn test_get_all() {
-    let client = get_client();
-    let response = client
-        .get(waterlevel_backend::ROOT.to_owned() + "config/")
-        .dispatch();
-    assert_eq!(response.status(), Status::Ok);
-}
-
-#[test]
-fn test_get_value() {
-    let client = get_client();
-    let response = client
-        .get(format!(
-            "{}config/{}",
-            waterlevel_backend::ROOT.to_owned(),
-            2
-        ))
-        .dispatch();
-    assert_eq!(response.status(), Status::Ok);
-}
-
-#[test]
 fn test_create() {
     let data = Input {
         key: String::from(""),
@@ -43,6 +21,28 @@ fn test_create() {
 }
 
 #[test]
+fn test_get_all() {
+    let client = get_client();
+    let response = client
+        .get(waterlevel_backend::ROOT.to_owned() + "config/")
+        .dispatch();
+    assert_eq!(response.status(), Status::Ok);
+}
+
+#[test]
+fn test_get_value() {
+    let client = get_client();
+    let response = client
+        .get(format!(
+            "{}config/{}",
+            waterlevel_backend::ROOT.to_owned(),
+            1
+        ))
+        .dispatch();
+    assert_eq!(response.status(), Status::Ok);
+}
+
+#[test]
 fn test_modify() {
     let data = Input {
         key: String::from(""),
@@ -53,7 +53,7 @@ fn test_modify() {
         .put(format!(
             "{}config/{}",
             waterlevel_backend::ROOT.to_owned(),
-            2
+            1
         ))
         .header(rocket::http::ContentType::JSON)
         .json(&data)
