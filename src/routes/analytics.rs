@@ -1,2 +1,12 @@
+#![allow(unused)]
+use crate::helpers::*;
+use rocket::{http::Status, serde::json::Json, State};
+
+use crate::diesel::prelude::*;
+use crate::models::Config;
+use crate::models::WaterLevel;
+use crate::schema::config::table as c_table;
+use crate::schema::water_levels::table as wl_table;
+
 #[get("/")]
-pub fn get_default() {}
+pub fn get_default(db: &State<Database>) {}
