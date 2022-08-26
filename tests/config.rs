@@ -31,7 +31,7 @@ fn test_create() {
     let response = client
         .post("/api/v1/config/")
         .header(rocket::http::ContentType::JSON)
-        .body(bincode::serialize(&data).expect("Unable to serialize input"))
+        .json(&data)
         .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }
@@ -46,7 +46,7 @@ fn test_modify() {
     let response = client
         .put(format!("/api/v1/config/{}", 2))
         .header(rocket::http::ContentType::JSON)
-        .body(bincode::serialize(&data).expect("Unable to serialize input"))
+        .json(&data)
         .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }
