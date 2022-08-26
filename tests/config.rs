@@ -12,7 +12,7 @@ fn test_create() {
         value: String::from(""),
     };
     let client = get_client();
-    let response = client
+    let _response = client
         .post(waterlevel_backend::ROOT.to_owned() + "config/")
         .header(rocket::http::ContentType::JSON)
         .json(&data)
