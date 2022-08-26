@@ -1,53 +1,75 @@
-use diesel::prelude::*;
-use dotenv::dotenv;
-use std::env;
+#[macro_use]
+extern crate rocket;
+#[macro_use]
+extern crate diesel;
+#[macro_use]
+extern crate diesel_migrations;
+extern crate dotenv;
 
-pub fn establish_connection() -> diesel::pg::PgConnection {
-    dotenv().ok();
+pub mod routes {
+    pub mod analytics;
+    pub mod config;
+    pub mod waterlevel;
+    pub mod webhooks;
+}
+pub mod helpers;
+pub mod models;
+pub mod schema;
 
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    match diesel::pg::PgConnection::establish(&database_url) {
-        Ok(v) => v,
-        Err(_) => {
-            rocket::log::private::log!(
-                rocket::log::private::Level::Error,
-                "Unable to connect to Database!"
-            );
-            panic!("Unable to connect to Database!");
-        }
-    }
+use helpers::{get_connection, get_pool, Database};
+
+pub const ROOT: &str = "/api/v1/";
+
+#[launch]
+pub fn entrypoint() -> _ {
+    // Create database struct
+    let database = Database(get_pool());
+    let conn = get_connection(&database);
+
+    // Run database migrations
+    embed_migrations!();
+    if embedded_migrations::run(&conn).is_ok() {
+        rocket::log::private::log!(rocket::log::private::Level::Info, "Ran migrations");
+    };
+    // Create rocket routes
+    rocket::build()
+        .manage(database)
+        .mount(ROOT.to_owned() + "health", routes![health])
+        .mount(
+            ROOT.to_owned() + "analytics",
+            routes![routes::analytics::get_default],
+        )
+        .mount(
+            ROOT.to_owned() + "config",
+            routes![
+                routes::config::get_all,
+                routes::config::get_value,
+                routes::config::create,
+                routes::config::modify
+            ],
+        )
+        .mount(
+            ROOT.to_owned() + "waterlevel",
+            routes![
+                routes::waterlevel::get_all,
+                routes::waterlevel::get_on_date,
+                routes::waterlevel::get_at_level,
+                routes::waterlevel::get_above_level,
+                routes::waterlevel::get_below_level
+            ],
+        )
+        .mount(
+            ROOT.to_owned() + "webhooks",
+            routes![
+                routes::webhooks::get_all,
+                routes::webhooks::create,
+                routes::webhooks::modify
+            ],
+        )
 }
 
-pub fn get_json<Model>(
-    res: Result<Vec<Model>, diesel::result::Error>,
-    log: Option<&'static str>,
-) -> Result<rocket::serde::json::Json<Model>, rocket::http::Status> {
-    match res {
-        Ok(mut v) => Ok(rocket::serde::json::Json(v.remove(0))),
-        Err(_) => {
-            let s = match log {
-                Some(s) => s,
-                None => "Unable to get/insert records!",
-            };
-            rocket::log::private::log!(rocket::log::private::Level::Error, "{}", s);
-            Err(rocket::http::Status::InternalServerError)
-        }
-    }
-}
-
-pub fn get_json_vec<Model>(
-    res: Result<Vec<Model>, diesel::result::Error>,
-    log: Option<&'static str>,
-) -> Result<rocket::serde::json::Json<Vec<Model>>, rocket::http::Status> {
-    match res {
-        Ok(v) => Ok(rocket::serde::json::Json(v)),
-        Err(_) => {
-            let s = match log {
-                Some(s) => s,
-                None => "Unable to get/insert records!",
-            };
-            rocket::log::private::log!(rocket::log::private::Level::Error, "{}", s);
-            Err(rocket::http::Status::InternalServerError)
-        }
-    }
+#[get("/")]
+fn health(db: &rocket::State<Database>) -> &'static str {
+    get_connection(db); // check connection to db
+    "Healthy!"
 }

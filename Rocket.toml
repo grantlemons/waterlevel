@@ -4,8 +4,8 @@ port = 8000
 limits = { form = "64 kB", json = "1 MiB" }
 
 [debug]
-# address = "localhost"
 limits = { json = "10MiB" }
+log_level = "critical"
 
 [release]
 port = 8000

@@ -1,28 +1,28 @@
-use rocket::{http::Status, log::private::log, log::private::Level, serde::json::Json};
+use rocket::{http::Status, log::private::log, log::private::Level, serde::json::Json, State};
 
 use crate::diesel::prelude::*;
 use crate::models::Webhook;
 use crate::schema::webhooks::table;
 
-use crate::lib::*;
+use crate::helpers::*;
 
 #[get("/")]
-pub fn get_all() -> Result<Json<Vec<Webhook>>, Status> {
-    let connection = establish_connection();
+pub fn get_all(db: &State<Database>) -> Result<Json<Vec<Webhook>>, Status> {
+    let connection = get_connection(db);
     get_json_vec(table.load::<Webhook>(&connection), None)
 }
 
 // Struct for input to functions that need it
-#[derive(serde::Deserialize)]
+#[derive(serde::Serialize, serde::Deserialize, Clone)]
 pub struct Input {
-    url: String,
-    event: String,
+    pub url: String,
+    pub event: String,
 }
 
 //TODO: Change behavior to only update rows
 #[put("/", format = "json", data = "<data>")]
-pub fn create(data: Json<Input>) -> Result<Json<Webhook>, Status> {
-    let connection = establish_connection();
+pub fn create(data: Json<Input>, db: &State<Database>) -> Result<Json<Vec<Webhook>>, Status> {
+    let connection = get_connection(db);
     let new_config = Webhook {
         id: uuid::Uuid::new_v4(),
         url: data.url.clone(),
@@ -30,7 +30,7 @@ pub fn create(data: Json<Input>) -> Result<Json<Webhook>, Status> {
         event: data.event.clone(),
     };
 
-    get_json::<Webhook>(
+    get_json_vec::<Webhook>(
         diesel::insert_into(table)
             .values(&new_config)
             .get_results::<Webhook>(&connection),
@@ -39,20 +39,28 @@ pub fn create(data: Json<Input>) -> Result<Json<Webhook>, Status> {
 }
 
 #[put("/<id>", format = "json", data = "<data>")]
-pub fn modify(id: &str, data: Json<Input>) -> Result<Json<Webhook>, Status> {
-    let connection = establish_connection();
+pub fn modify(
+    id: &str,
+    data: Json<Input>,
+    db: &State<Database>,
+) -> Result<Json<Vec<Webhook>>, Status> {
+    let connection = get_connection(db);
     match uuid::Uuid::parse_str(id) {
-        Ok(id) => get_json::<Webhook>(
-            diesel::insert_into(table)
-                .values(Webhook {
-                    id,
-                    url: data.url.clone(),
-                    last_sent: None,
-                    event: data.event.clone(),
-                })
-                .get_results::<Webhook>(&connection),
-            None,
-        ),
+        Ok(id) => {
+            let new_config = Webhook {
+                id,
+                url: data.url.clone(),
+                last_sent: None,
+                event: data.event.clone(),
+            };
+            let target = table.find(id);
+            get_json_vec(
+                diesel::update(target)
+                    .set(&new_config)
+                    .get_results::<Webhook>(&connection),
+                None,
+            )
+        },
         Err(_) => {
             log!(Level::Error, "Unable to parse UUID!");
             Err(Status::BadRequest)
