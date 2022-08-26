@@ -1,5 +1,3 @@
-
-
 use rocket::{http::Status, local::blocking::Client};
 use waterlevel_backend::routes::config::Input;
 
@@ -10,14 +8,22 @@ fn get_client() -> Client {
 #[test]
 fn test_get_all() {
     let client = get_client();
-    let response = client.get("/api/v1/config/").dispatch();
+    let response = client
+        .get(waterlevel_backend::ROOT.to_owned() + "config/")
+        .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }
 
 #[test]
 fn test_get_value() {
     let client = get_client();
-    let response = client.get(format!("/api/v1/config/{}", 2)).dispatch();
+    let response = client
+        .get(format!(
+            "{}config/{}",
+            waterlevel_backend::ROOT.to_owned(),
+            2
+        ))
+        .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }
 
@@ -29,7 +35,7 @@ fn test_create() {
     };
     let client = get_client();
     let response = client
-        .post("/api/v1/config/")
+        .post(waterlevel_backend::ROOT.to_owned() + "config/")
         .header(rocket::http::ContentType::JSON)
         .json(&data)
         .dispatch();
@@ -44,7 +50,11 @@ fn test_modify() {
     };
     let client = get_client();
     let response = client
-        .put(format!("/api/v1/config/{}", 2))
+        .put(format!(
+            "{}config/{}",
+            waterlevel_backend::ROOT.to_owned(),
+            2
+        ))
         .header(rocket::http::ContentType::JSON)
         .json(&data)
         .dispatch();

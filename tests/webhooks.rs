@@ -1,4 +1,3 @@
-
 use rocket::{http::Status, local::blocking::Client};
 use waterlevel_backend::routes::webhooks::Input;
 
@@ -9,7 +8,9 @@ fn get_client() -> Client {
 #[test]
 fn test_get_all() {
     let client = get_client();
-    let response = client.get("/api/v1/webhooks/").dispatch();
+    let response = client
+        .get(waterlevel_backend::ROOT.to_owned() + "webhooks/")
+        .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }
 
@@ -30,7 +31,7 @@ fn test_create() {
     };
     let client = get_client();
     let response = client
-        .post("/api/v1/webhooks/")
+        .post(waterlevel_backend::ROOT.to_owned() + "webhooks/")
         .json(&data)
         .dispatch();
     assert_eq!(response.status(), Status::Ok);
@@ -44,7 +45,11 @@ fn test_modify() {
     };
     let client = get_client();
     let response = client
-        .put(format!("/api/v1/webhooks/{}", 2))
+        .put(format!(
+            "{}webhooks/{}",
+            waterlevel_backend::ROOT.to_owned(),
+            2
+        ))
         .json(&data)
         .dispatch();
     assert_eq!(response.status(), Status::Ok);

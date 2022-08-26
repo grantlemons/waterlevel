@@ -9,7 +9,9 @@ fn get_client() -> Client {
 #[test]
 fn test_get_all() {
     let client = get_client();
-    let response = client.get("/api/v1/waterlevel/").dispatch();
+    let response = client
+        .get(waterlevel_backend::ROOT.to_owned() + "waterlevel/")
+        .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }
 
@@ -17,7 +19,11 @@ fn test_get_all() {
 fn test_get_on_date() {
     let client = get_client();
     let response = client
-        .get(format!("/api/v1/waterlevel/date/{}", "2022-08-25"))
+        .get(format!(
+            "{}waterlevel/date/{}",
+            waterlevel_backend::ROOT.to_owned(),
+            "2022-08-25"
+        ))
         .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }
@@ -26,7 +32,11 @@ fn test_get_on_date() {
 fn test_get_at_level() {
     let client = get_client();
     let response = client
-        .get(format!("/api/v1/waterlevel/level/at/{}", 5.0))
+        .get(format!(
+            "{}waterlevel/level/at/{}",
+            waterlevel_backend::ROOT.to_owned(),
+            5.0
+        ))
         .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }
@@ -35,7 +45,11 @@ fn test_get_at_level() {
 fn test_get_above_level() {
     let client = get_client();
     let response = client
-        .get(format!("/api/v1/waterlevel/level/above/{}", 5.0))
+        .get(format!(
+            "{}waterlevel/level/above/{}",
+            waterlevel_backend::ROOT.to_owned(),
+            5.0
+        ))
         .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }
@@ -44,7 +58,11 @@ fn test_get_above_level() {
 fn test_get_below_level() {
     let client = get_client();
     let response = client
-        .get(format!("/api/v1/waterlevel/level/below/{}", 5.0))
+        .get(format!(
+            "{}waterlevel/level/below/{}",
+            waterlevel_backend::ROOT.to_owned(),
+            5.0
+        ))
         .dispatch();
     assert_eq!(response.status(), Status::Ok);
 }

@@ -18,7 +18,7 @@ pub mod schema;
 
 use helpers::{get_connection, get_pool, Database};
 
-const ROOT: &str = "/api/v1/";
+pub const ROOT: &str = "/api/v1/";
 
 #[launch]
 pub fn entrypoint() -> _ {
