@@ -25,7 +25,12 @@ pub fn get_json_vec<Model>(
 ) -> Result<rocket::serde::json::Json<Vec<Model>>, rocket::http::Status> {
     match res {
         Ok(v) => Ok(rocket::serde::json::Json(v)),
-        Err(_) => {
+        Err(e) => {
+            rocket::log::private::log!(
+                rocket::log::private::Level::Error,
+                "{}",
+                e
+            );
             rocket::log::private::log!(
                 rocket::log::private::Level::Error,
                 "{}",
