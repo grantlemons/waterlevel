@@ -18,6 +18,8 @@ pub mod schema;
 
 use helpers::{get_connection, get_pool, Database};
 
+const ROOT: &str = "/api/v1/";
+
 #[launch]
 pub fn entrypoint() -> _ {
     // Create database struct
@@ -32,10 +34,13 @@ pub fn entrypoint() -> _ {
     // Create rocket routes
     rocket::build()
         .manage(database)
-        .mount("/api/v1/health", routes![health])
-        .mount("/api/v1/analytics", routes![routes::analytics::get_default])
+        .mount(ROOT.to_owned() + "health", routes![health])
         .mount(
-            "/api/v1/config",
+            ROOT.to_owned() + "analytics",
+            routes![routes::analytics::get_default],
+        )
+        .mount(
+            ROOT.to_owned() + "config",
             routes![
                 routes::config::get_all,
                 routes::config::get_value,
@@ -44,7 +49,7 @@ pub fn entrypoint() -> _ {
             ],
         )
         .mount(
-            "/api/v1/waterlevel",
+            ROOT.to_owned() + "waterlevel",
             routes![
                 routes::waterlevel::get_all,
                 routes::waterlevel::get_on_date,
@@ -54,7 +59,7 @@ pub fn entrypoint() -> _ {
             ],
         )
         .mount(
-            "/api/v1/webhooks",
+            ROOT.to_owned() + "webhooks",
             routes![
                 routes::webhooks::get_all,
                 routes::webhooks::create,
