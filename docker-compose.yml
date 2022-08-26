@@ -21,6 +21,8 @@ services:
         depends_on:
             database:
                 condition: service_healthy
+        environment:
+            - DATABASE_URL="postgres://postgres:postgres@localhost/waterlevel"
         build:
             context: .
             dockerfile: Dockerfile
