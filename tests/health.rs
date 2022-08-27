@@ -4,6 +4,11 @@ fn get_client() -> Client {
     Client::tracked(waterlevel_backend::entrypoint()).expect("valid rocket instance")
 }
 
+#[ctor::ctor]
+fn setup() {
+    waterlevel_backend::run_migrations(None);
+}
+
 #[test]
 fn test_health() {
     let client = get_client();

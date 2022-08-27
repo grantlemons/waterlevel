@@ -20,17 +20,25 @@ use helpers::{get_connection, get_pool, Database};
 
 pub const ROOT: &str = "/api/v1/";
 
-#[launch]
-pub fn entrypoint() -> _ {
-    // Create database struct
-    let database = Database(get_pool());
-    let conn = get_connection(&database);
-
-    // Run database migrations
+pub fn run_migrations(database: Option<&Database>) {
+    let conn = match database {
+        Some(v) => get_connection(v),
+        None => get_connection(&Database(get_pool())),
+    };
     embed_migrations!();
     if embedded_migrations::run(&conn).is_ok() {
         rocket::log::private::log!(rocket::log::private::Level::Info, "Ran migrations");
     };
+}
+
+#[launch]
+pub fn entrypoint() -> _ {
+    // Create database struct
+    let database = Database(get_pool());
+
+    // Run database migrations
+    run_migrations(Some(&database));
+    
     // Create rocket routes
     rocket::build()
         .manage(database)
@@ -55,7 +63,8 @@ pub fn entrypoint() -> _ {
                 routes::waterlevel::get_on_date,
                 routes::waterlevel::get_at_level,
                 routes::waterlevel::get_above_level,
-                routes::waterlevel::get_below_level
+                routes::waterlevel::get_below_level,
+                routes::waterlevel::add_waterlevel,
             ],
         )
         .mount(

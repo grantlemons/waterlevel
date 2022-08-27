@@ -1,3 +1,4 @@
+#![allow(clippy::extra_unused_lifetimes)]
 use diesel::*;
 
 use crate::schema::*;
@@ -6,15 +7,22 @@ use diesel_geometry::pg::data_types::PgPoint;
 use serde::Serialize;
 use uuid::Uuid;
 
-#[derive(Serialize, Insertable, Queryable, AsChangeset, Associations, Identifiable, Debug)]
+#[derive(Serialize, Insertable, Queryable, Associations, Identifiable, Debug)]
 #[table_name = "weather"]
 pub struct Weather {
     pub id: Uuid,
     pub location: PgPoint,
     pub timestamp: NaiveDateTime,
+    pub temp: f64,
+    pub temp_min: f64,
+    pub temp_max: f64,
+    pub pressure: f64,
+    pub humidity: i16,
+    pub weather_id: i16,
+    pub weather_name: String,
 }
 
-#[derive(Serialize, Insertable, Queryable, AsChangeset, Associations, Identifiable, Debug)]
+#[derive(Serialize, Insertable, Queryable, Associations, Identifiable, Debug)]
 #[belongs_to(Weather)]
 #[table_name = "water_levels"]
 pub struct WaterLevel {

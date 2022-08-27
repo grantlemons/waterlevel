@@ -21,6 +21,13 @@ table! {
         id -> Uuid,
         location -> diesel_geometry::sql_types::Point,
         timestamp -> Timestamp,
+        temp -> Float8,
+        temp_min -> Float8,
+        temp_max -> Float8,
+        pressure -> Float8,
+        humidity -> SmallInt,
+        weather_id -> SmallInt,
+        weather_name -> Bpchar,
     }
 }
 

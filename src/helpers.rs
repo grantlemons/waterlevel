@@ -28,7 +28,7 @@ pub fn get_json_vec<Model>(
         Err(e) => {
             rocket::log::private::log!(
                 rocket::log::private::Level::Error,
-                "{}",
+                "Error when getting from DB: {}",
                 e
             );
             rocket::log::private::log!(

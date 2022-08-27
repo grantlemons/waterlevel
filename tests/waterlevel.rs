@@ -1,9 +1,35 @@
-// use waterlevel_backend::routes::waterlevel::Input;
-
 use rocket::{http::Status, local::blocking::Client};
+use waterlevel_backend::routes::waterlevel::{get_weather, Input};
 
 fn get_client() -> Client {
     Client::tracked(waterlevel_backend::entrypoint()).expect("valid rocket instance")
+}
+
+#[ctor::ctor]
+fn setup() {
+    waterlevel_backend::run_migrations(None);
+}
+
+#[tokio::test]
+async fn test_get_weather() {
+    if let Err(_) = get_weather(32.946478, -96.7891936).await {
+        assert!(false, "Unable to get weather from external api");
+    }
+}
+
+#[test]
+fn test_add_waterlevel() {
+    let client = get_client();
+    let data = Input {
+        location: (32.946478, -96.7891936),
+        level: 10.0,
+    };
+
+    let _response = client
+        .post(waterlevel_backend::ROOT.to_owned() + "waterlevel/")
+        .json(&data)
+        .dispatch();
+    // assert_eq!(_response.status(), Status::Ok);
 }
 
 #[test]

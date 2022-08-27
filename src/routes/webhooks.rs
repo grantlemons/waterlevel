@@ -20,7 +20,7 @@ pub struct Input {
 }
 
 //TODO: Change behavior to only update rows
-#[put("/", format = "json", data = "<data>")]
+#[post("/", format = "json", data = "<data>")]
 pub fn create(data: Json<Input>, db: &State<Database>) -> Result<Json<Vec<Webhook>>, Status> {
     let connection = get_connection(db);
     let new_config = Webhook {
@@ -60,7 +60,7 @@ pub fn modify(
                     .get_results::<Webhook>(&connection),
                 None,
             )
-        },
+        }
         Err(_) => {
             log!(Level::Error, "Unable to parse UUID!");
             Err(Status::BadRequest)
