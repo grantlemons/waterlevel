@@ -60,7 +60,7 @@ pub fn modify(
                     .get_results::<Webhook>(&connection),
                 None,
             )
-        },
+        }
         Err(_) => {
             log!(Level::Error, "Unable to parse UUID!");
             Err(Status::BadRequest)

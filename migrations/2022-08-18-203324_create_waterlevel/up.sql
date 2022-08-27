@@ -4,5 +4,5 @@ CREATE TABLE water_levels (
     "location" POINT NOT NULL,
     "timestamp" TIMESTAMP NOT NULL,
     weather_id UUID,
-    level REAL NOT NULL
+    level DOUBLE PRECISION NOT NULL
 );

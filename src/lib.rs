@@ -2,6 +2,7 @@
 extern crate rocket;
 #[macro_use]
 extern crate diesel;
+extern crate dotenv_codegen;
 #[macro_use]
 extern crate diesel_migrations;
 extern crate dotenv;
@@ -55,7 +56,8 @@ pub fn entrypoint() -> _ {
                 routes::waterlevel::get_on_date,
                 routes::waterlevel::get_at_level,
                 routes::waterlevel::get_above_level,
-                routes::waterlevel::get_below_level
+                routes::waterlevel::get_below_level,
+                routes::waterlevel::add_waterlevel,
             ],
         )
         .mount(
