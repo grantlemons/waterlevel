@@ -2,7 +2,6 @@
 extern crate rocket;
 #[macro_use]
 extern crate diesel;
-extern crate dotenv_codegen;
 #[macro_use]
 extern crate diesel_migrations;
 extern crate dotenv;

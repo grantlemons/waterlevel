@@ -1,5 +1,6 @@
 use chrono::NaiveDate;
 use rocket::{http::Status, log::private::log, log::private::Level, serde::json::Json, State};
+use std::env;
 
 use crate::diesel::prelude::*;
 use crate::models::{WaterLevel, Weather};
@@ -163,7 +164,8 @@ pub async fn get_weather(lat: f64, lon: f64) -> Result<Weather, reqwest::Error> 
     let url = format!("https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=imperial&appid={key}",
         lat = lat,
         lon = lon,
-        key = dotenv_codegen::dotenv!("WEATHER_API_KEY")
+        key = env::var("WEATHER_API_KEY")
+            .expect("Unable to get weather api key environment variable")
     );
     let response = reqwest::get(&url).await?;
     let json: Response = response.json().await?;
