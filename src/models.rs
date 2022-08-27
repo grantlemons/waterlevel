@@ -6,7 +6,7 @@ use diesel_geometry::pg::data_types::PgPoint;
 use serde::Serialize;
 use uuid::Uuid;
 
-#[derive(Serialize, Insertable, Queryable, AsChangeset, Associations, Identifiable, Debug)]
+#[derive(Serialize, Insertable, Queryable, Associations, Identifiable, Debug)]
 #[table_name = "weather"]
 pub struct Weather {
     pub id: Uuid,
@@ -21,7 +21,7 @@ pub struct Weather {
     pub weather_name: String,
 }
 
-#[derive(Serialize, Insertable, Queryable, AsChangeset, Associations, Identifiable, Debug)]
+#[derive(Serialize, Insertable, Queryable, Associations, Identifiable, Debug)]
 #[belongs_to(Weather)]
 #[table_name = "water_levels"]
 pub struct WaterLevel {
