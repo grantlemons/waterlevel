@@ -5,6 +5,11 @@ fn get_client() -> Client {
     Client::tracked(waterlevel_backend::entrypoint()).expect("valid rocket instance")
 }
 
+#[ctor::ctor]
+fn setup() {
+    waterlevel_backend::run_migrations(None);
+}
+
 #[tokio::test]
 async fn test_get_weather() {
     if let Err(_) = get_weather(32.946478, -96.7891936).await {
