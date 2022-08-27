@@ -1,4 +1,4 @@
-#![allow(unused)]
+#![allow(unused, clippy::let_unit_value)] // remove after implementing functions
 use crate::helpers::*;
 use rocket::{http::Status, serde::json::Json, State};
 

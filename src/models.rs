@@ -1,3 +1,4 @@
+#![allow(clippy::extra_unused_lifetimes)]
 use diesel::*;
 
 use crate::schema::*;
