@@ -10,19 +10,19 @@ use crate::schema::water_levels::{dsl, table};
 
 use crate::helpers::*;
 
-#[get("/")]
 /// Get all waterlevel entries from database
+#[get("/")]
 pub async fn get_all(db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
     let connection = get_connection(db);
     get_json_vec(table.load::<WaterLevel>(&connection), None)
 }
 
-#[get("/date/<date>")]
 /// Get all waterlevel entries recorded on a certain date
 ///
 /// # Parameters
 ///
 /// `/date/<date>` date in ISO 8601 format (YYYY-MM-DD)
+#[get("/date/<date>")]
 pub async fn get_on_date(
     date: &str,
     db: &State<Database>,
@@ -49,12 +49,12 @@ pub async fn get_on_date(
     }
 }
 
-#[get("/level/at/<level>")]
 /// Get all waterlevel entries that have a water level that matches the input parameter
 ///
 /// # Parameters
 ///
 /// `/level/at/<level>` water level that entries should match
+#[get("/level/at/<level>")]
 pub async fn get_at_level(
     level: f32,
     db: &State<Database>,
@@ -68,12 +68,12 @@ pub async fn get_at_level(
     )
 }
 
-#[get("/level/above/<level>")]
 /// Get all waterlevel entries that have a water level that is above the input parameter
 ///
 /// # Parameters
 ///
 /// `/level/above/<level>` water level that entries should exceed
+#[get("/level/above/<level>")]
 pub async fn get_above_level(
     level: f32,
     db: &State<Database>,
@@ -87,12 +87,12 @@ pub async fn get_above_level(
     )
 }
 
-#[get("/level/below/<level>")]
 /// Get all waterlevel entries that have a water level that is below the input parameter
 ///
 /// # Parameters
 ///
 /// `/level/below/<level>` water level that entries should be less than
+#[get("/level/below/<level>")]
 pub async fn get_below_level(
     level: f32,
     db: &State<Database>,
