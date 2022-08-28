@@ -1,5 +1,5 @@
 use rocket::{http::Status, local::blocking::Client};
-use waterlevel_backend::routes::config::Input;
+use waterlevel_backend::handlers::config::Input;
 
 fn get_client() -> Client {
     Client::tracked(waterlevel_backend::entrypoint()).expect("valid rocket instance")

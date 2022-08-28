@@ -9,7 +9,7 @@ extern crate diesel_migrations;
 extern crate dotenv;
 
 /// Route specific handlers
-pub mod routes {
+pub mod handlers {
     /// Handlers for waterlevel analytics
     pub mod analytics;
     /// Configuration Handlers
@@ -59,34 +59,34 @@ pub fn entrypoint() -> _ {
         .mount(ROOT.to_owned() + "health", routes![health])
         .mount(
             ROOT.to_owned() + "analytics",
-            routes![routes::analytics::get_default],
+            routes![handlers::analytics::get_default],
         )
         .mount(
             ROOT.to_owned() + "config",
             routes![
-                routes::config::get_all,
-                routes::config::get_value,
-                routes::config::create,
-                routes::config::modify
+                handlers::config::get_all,
+                handlers::config::get_value,
+                handlers::config::create,
+                handlers::config::modify
             ],
         )
         .mount(
             ROOT.to_owned() + "waterlevel",
             routes![
-                routes::waterlevel::get_all,
-                routes::waterlevel::get_on_date,
-                routes::waterlevel::get_at_level,
-                routes::waterlevel::get_above_level,
-                routes::waterlevel::get_below_level,
-                routes::waterlevel::add_waterlevel,
+                handlers::waterlevel::get_all,
+                handlers::waterlevel::get_on_date,
+                handlers::waterlevel::get_at_level,
+                handlers::waterlevel::get_above_level,
+                handlers::waterlevel::get_below_level,
+                handlers::waterlevel::add_waterlevel,
             ],
         )
         .mount(
             ROOT.to_owned() + "webhooks",
             routes![
-                routes::webhooks::get_all,
-                routes::webhooks::create,
-                routes::webhooks::modify
+                handlers::webhooks::get_all,
+                handlers::webhooks::create,
+                handlers::webhooks::modify
             ],
         )
 }
