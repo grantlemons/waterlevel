@@ -1,5 +1,5 @@
 use rocket::{http::Status, local::blocking::Client};
-use waterlevel_backend::handlers::webhooks::Input;
+use waterlevel_backend::handlers::webhooks::WebhookForm;
 
 fn get_client() -> Client {
     Client::tracked(waterlevel_backend::entrypoint()).expect("valid rocket instance")
@@ -12,9 +12,9 @@ fn setup() {
 
 #[test]
 fn test_create() {
-    let data = Input {
+    let data = WebhookForm {
         url: String::from(""),
-        event: String::from(""),
+        event: waterlevel_backend::helpers::WebhookEvent::All,
     };
     let client = get_client();
     let _response = client
@@ -45,9 +45,9 @@ fn test_get_all() {
 #[test]
 #[ignore]
 fn test_modify() {
-    let data = Input {
+    let data = WebhookForm {
         url: String::from(""),
-        event: String::from(""),
+        event: waterlevel_backend::helpers::WebhookEvent::All,
     };
     let client = get_client();
     let response = client

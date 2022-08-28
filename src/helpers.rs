@@ -2,6 +2,20 @@ use diesel::r2d2::PooledConnection;
 use dotenv::dotenv;
 use std::env;
 
+/// Possible events that call specific webhooks configured to listen for them
+#[derive(serde::Serialize, serde::Deserialize)]
+pub enum WebhookEvent {
+    All,
+}
+
+impl std::fmt::Display for WebhookEvent {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            WebhookEvent::All => write!(f, "All"),
+        }
+    }
+}
+
 pub struct Database(pub ConnPool);
 
 pub type ConnPool = diesel::r2d2::Pool<PgConnManager>;
