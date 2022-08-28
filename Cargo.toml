@@ -1,6 +1,9 @@
 [package]
 name = "waterlevel-backend"
 authors = ["Grant Lemons"]
+description = ""
+readme = "README.md"
+license = "GPL-3.0-only"
 publish = false
 version = "0.1.0"
 edition = "2021"
