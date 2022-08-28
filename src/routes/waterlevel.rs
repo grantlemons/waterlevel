@@ -9,14 +9,14 @@ use crate::schema::water_levels::{dsl, table};
 use crate::helpers::*;
 
 #[get("/")]
-pub fn get_all(db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
+pub async fn get_all(db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
     let connection = get_connection(db);
     get_json_vec(table.load::<WaterLevel>(&connection), None)
 }
 
 /// Gets all data recorded on a certain date
 #[get("/date/<date>")]
-pub fn get_on_date(date: &str, db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
+pub async fn get_on_date(date: &str, db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
     // Gives different responses depending on the validity of the passed date
     match NaiveDate::parse_from_str(date, "%Y-%m-%d") {
         Ok(date) => {
@@ -40,7 +40,7 @@ pub fn get_on_date(date: &str, db: &State<Database>) -> Result<Json<Vec<WaterLev
 }
 
 #[get("/level/at/<level>")]
-pub fn get_at_level(level: f32, db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
+pub async fn get_at_level(level: f32, db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
     let connection = get_connection(db);
     get_json_vec(
         table
@@ -51,7 +51,7 @@ pub fn get_at_level(level: f32, db: &State<Database>) -> Result<Json<Vec<WaterLe
 }
 
 #[get("/level/above/<level>")]
-pub fn get_above_level(level: f32, db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
+pub async fn get_above_level(level: f32, db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
     let connection = get_connection(db);
     get_json_vec(
         table
@@ -62,7 +62,7 @@ pub fn get_above_level(level: f32, db: &State<Database>) -> Result<Json<Vec<Wate
 }
 
 #[get("/level/below/<level>")]
-pub fn get_below_level(level: f32, db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
+pub async fn get_below_level(level: f32, db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
     let connection = get_connection(db);
     get_json_vec(
         table

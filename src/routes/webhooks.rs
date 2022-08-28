@@ -7,7 +7,7 @@ use crate::schema::webhooks::table;
 use crate::helpers::*;
 
 #[get("/")]
-pub fn get_all(db: &State<Database>) -> Result<Json<Vec<Webhook>>, Status> {
+pub async fn get_all(db: &State<Database>) -> Result<Json<Vec<Webhook>>, Status> {
     let connection = get_connection(db);
     get_json_vec(table.load::<Webhook>(&connection), None)
 }
@@ -21,7 +21,7 @@ pub struct Input {
 
 //TODO: Change behavior to only update rows
 #[post("/", format = "json", data = "<data>")]
-pub fn create(data: Json<Input>, db: &State<Database>) -> Result<Json<Vec<Webhook>>, Status> {
+pub async fn create(data: Json<Input>, db: &State<Database>) -> Result<Json<Vec<Webhook>>, Status> {
     let connection = get_connection(db);
     let new_config = Webhook {
         id: uuid::Uuid::new_v4(),
@@ -39,7 +39,7 @@ pub fn create(data: Json<Input>, db: &State<Database>) -> Result<Json<Vec<Webhoo
 }
 
 #[put("/<id>", format = "json", data = "<data>")]
-pub fn modify(
+pub async fn modify(
     id: &str,
     data: Json<Input>,
     db: &State<Database>,
