@@ -1,5 +1,5 @@
 use rocket::{http::Status, local::blocking::Client};
-use waterlevel_backend::handlers::waterlevel::{get_weather, Input};
+use waterlevel_backend::handlers::waterlevel::{get_weather, WaterlevelForm};
 
 fn get_client() -> Client {
     Client::tracked(waterlevel_backend::entrypoint()).expect("valid rocket instance")
@@ -20,7 +20,7 @@ async fn test_get_weather() {
 #[test]
 fn test_add_waterlevel() {
     let client = get_client();
-    let data = Input {
+    let data = WaterlevelForm {
         location: (32.946478, -96.7891936),
         level: 10.0,
     };

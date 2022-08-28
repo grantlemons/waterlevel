@@ -1,5 +1,5 @@
 use rocket::{http::Status, local::blocking::Client};
-use waterlevel_backend::handlers::config::Input;
+use waterlevel_backend::handlers::config::ConfigForm;
 
 fn get_client() -> Client {
     Client::tracked(waterlevel_backend::entrypoint()).expect("valid rocket instance")
@@ -12,7 +12,7 @@ fn setup() {
 
 #[test]
 fn test_create() {
-    let data = Input {
+    let data = ConfigForm {
         key: String::from(""),
         value: String::from(""),
     };
@@ -51,7 +51,7 @@ fn test_get_value() {
 #[test]
 #[ignore]
 fn test_modify() {
-    let data = Input {
+    let data = ConfigForm {
         key: String::from(""),
         value: String::from(""),
     };
