@@ -24,7 +24,6 @@ pub struct WebhookForm {
     pub event: WebhookEvent,
 }
 
-//TODO: Change behavior to only update rows
 /// Create a new webhook configuration within the database
 ///
 /// # Body
@@ -35,6 +34,7 @@ pub async fn create(
     data: Json<WebhookForm>,
     db: &State<Database>,
 ) -> Result<Json<Vec<Webhook>>, Status> {
+    //TODO: Change behavior to only update rows
     let connection = get_connection(db);
     let new_config = Webhook {
         id: uuid::Uuid::new_v4(),
