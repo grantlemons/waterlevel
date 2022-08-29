@@ -36,14 +36,21 @@ pub async fn trigger_webhooks(event: WebhookEvent) {
         .load::<Webhook>(&connection)
         .expect("Unable to get records");
     for i in urls {
-        if let Ok(_) = client
+        if client
             .post(&i.url)
             .json(&WebhookBody {
                 event: event.to_string(),
             })
             .send()
             .await
-        {};
+            .is_ok()
+        {
+            rocket::log::private::log!(
+                rocket::log::private::Level::Debug,
+                "Sent POST request to {}",
+                i.url,
+            );
+        };
     }
 }
 
