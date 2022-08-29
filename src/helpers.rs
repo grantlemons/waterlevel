@@ -5,13 +5,21 @@ use std::env;
 /// Possible events that call specific webhooks configured to listen for them
 #[derive(serde::Serialize, serde::Deserialize)]
 pub enum WebhookEvent {
-    All,
+    CreateConfig,
+    CreateWaterlevel,
+    CreateWebhook,
+    ModifyConfig,
+    ModifyWebhook,
 }
 
 impl std::fmt::Display for WebhookEvent {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match self {
-            WebhookEvent::All => write!(f, "All"),
+            WebhookEvent::CreateConfig => write!(f, "create_config"),
+            WebhookEvent::CreateWaterlevel => write!(f, "create_waterlevel"),
+            WebhookEvent::CreateWebhook => write!(f, "create_webhook"),
+            WebhookEvent::ModifyConfig => write!(f, "modify_config"),
+            WebhookEvent::ModifyWebhook => write!(f, "modify_webhook"),
         }
     }
 }
@@ -36,21 +44,30 @@ pub async fn trigger_webhooks(event: WebhookEvent) {
         .load::<Webhook>(&connection)
         .expect("Unable to get records");
     for i in urls {
-        if client
+        match client
             .post(&i.url)
             .json(&WebhookBody {
                 event: event.to_string(),
             })
             .send()
             .await
-            .is_ok()
         {
-            rocket::log::private::log!(
-                rocket::log::private::Level::Debug,
-                "Sent POST request to {}",
-                i.url,
-            );
-        };
+            Ok(_) => {
+                rocket::log::private::log!(
+                    rocket::log::private::Level::Debug,
+                    "Sent POST request to {}",
+                    i.url,
+                );
+            }
+            Err(e) => {
+                rocket::log::private::log!(
+                    rocket::log::private::Level::Debug,
+                    "Failed to send POST request to {}: {}",
+                    i.url,
+                    e,
+                );
+            }
+        }
     }
 }
 

@@ -124,6 +124,8 @@ pub async fn add_waterlevel(
     data: Json<WaterlevelForm>,
     db: &State<Database>,
 ) -> Result<Json<Vec<WaterLevel>>, Status> {
+    trigger_webhooks(WebhookEvent::CreateWaterlevel).await;
+
     let connection = get_connection(db);
 
     // Get weather data

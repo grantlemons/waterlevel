@@ -2,9 +2,9 @@
 
 use rocket::{http::Status, serde::json::Json, State};
 
-use crate::diesel::prelude::*;
 use crate::models::Config;
 use crate::schema::config::table;
+use crate::{diesel::prelude::*, helpers};
 
 use crate::helpers::*;
 
@@ -45,6 +45,8 @@ pub async fn create(
     data: Json<ConfigForm>,
     db: &State<Database>,
 ) -> Result<Json<Vec<Config>>, Status> {
+    helpers::trigger_webhooks(WebhookEvent::CreateConfig).await;
+
     let connection = get_connection(db);
     let new_config = Config {
         key: data.key.clone(),
@@ -75,6 +77,8 @@ pub async fn modify(
     data: Json<ConfigForm>,
     db: &State<Database>,
 ) -> Result<Json<Vec<Config>>, Status> {
+    helpers::trigger_webhooks(WebhookEvent::ModifyConfig).await;
+
     let connection = get_connection(db);
     let new_config = Config {
         key: String::from(key),

@@ -14,7 +14,7 @@ fn setup() {
 fn test_create() {
     let data = WebhookForm {
         url: String::from(""),
-        event: waterlevel_backend::helpers::WebhookEvent::All,
+        event: waterlevel_backend::helpers::WebhookEvent::CreateConfig,
     };
     let client = get_client();
     let _response = client
@@ -47,7 +47,7 @@ fn test_get_all() {
 fn test_modify() {
     let data = WebhookForm {
         url: String::from(""),
-        event: waterlevel_backend::helpers::WebhookEvent::All,
+        event: waterlevel_backend::helpers::WebhookEvent::CreateConfig,
     };
     let client = get_client();
     let response = client
