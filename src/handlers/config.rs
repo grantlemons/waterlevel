@@ -45,7 +45,7 @@ pub async fn create(
     data: Json<ConfigForm>,
     db: &State<Database>,
 ) -> Result<Json<Vec<Config>>, Status> {
-    helpers::trigger_webhooks(WebhookEvent::CreateConfig).await;
+    helpers::trigger_webhooks(WebhookEvent::CreateConfig);
 
     let connection = get_connection(db);
     let new_config = Config {
@@ -77,7 +77,7 @@ pub async fn modify(
     data: Json<ConfigForm>,
     db: &State<Database>,
 ) -> Result<Json<Vec<Config>>, Status> {
-    helpers::trigger_webhooks(WebhookEvent::ModifyConfig).await;
+    helpers::trigger_webhooks(WebhookEvent::ModifyConfig);
 
     let connection = get_connection(db);
     let new_config = Config {

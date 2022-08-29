@@ -29,8 +29,13 @@ struct WebhookBody {
     event: String,
 }
 
+/// Create a thread for each webhook event
+pub fn trigger_webhooks(event: WebhookEvent) {
+    std::thread::spawn(move || async { send_webhooks(event).await });
+}
+
 /// Send POST requests to all relevent urls based on webhook config
-pub async fn trigger_webhooks(event: WebhookEvent) {
+pub async fn send_webhooks(event: WebhookEvent) {
     use crate::diesel::prelude::*;
     use crate::models::Webhook;
     use crate::schema::webhooks::{dsl, table};

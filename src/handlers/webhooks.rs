@@ -34,7 +34,7 @@ pub async fn create(
     data: Json<WebhookForm>,
     db: &State<Database>,
 ) -> Result<Json<Vec<Webhook>>, Status> {
-    trigger_webhooks(WebhookEvent::CreateWebhook).await;
+    trigger_webhooks(WebhookEvent::CreateWebhook);
 
     //TODO: Change behavior to only update rows
     let connection = get_connection(db);
@@ -64,7 +64,7 @@ pub async fn modify(
     data: Json<WebhookForm>,
     db: &State<Database>,
 ) -> Result<Json<Vec<Webhook>>, Status> {
-    trigger_webhooks(WebhookEvent::ModifyWebhook).await;
+    trigger_webhooks(WebhookEvent::ModifyWebhook);
 
     let connection = get_connection(db);
     match uuid::Uuid::parse_str(id) {
