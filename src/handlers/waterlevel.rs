@@ -1,3 +1,5 @@
+//! Handlers for getting and creating waterlevel entries in the database
+
 use chrono::NaiveDate;
 use rocket::{http::Status, log::private::log, log::private::Level, serde::json::Json, State};
 use std::env;
@@ -8,15 +10,23 @@ use crate::schema::water_levels::{dsl, table};
 
 use crate::helpers::*;
 
+/// Get all waterlevel entries from database
 #[get("/")]
-pub fn get_all(db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
+pub async fn get_all(db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
     let connection = get_connection(db);
     get_json_vec(table.load::<WaterLevel>(&connection), None)
 }
 
-/// Gets all data recorded on a certain date
+/// Get all waterlevel entries recorded on a certain date
+///
+/// # Parameters
+///
+/// `/date/<date>` date in ISO 8601 format (YYYY-MM-DD)
 #[get("/date/<date>")]
-pub fn get_on_date(date: &str, db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
+pub async fn get_on_date(
+    date: &str,
+    db: &State<Database>,
+) -> Result<Json<Vec<WaterLevel>>, Status> {
     // Gives different responses depending on the validity of the passed date
     match NaiveDate::parse_from_str(date, "%Y-%m-%d") {
         Ok(date) => {
@@ -39,8 +49,16 @@ pub fn get_on_date(date: &str, db: &State<Database>) -> Result<Json<Vec<WaterLev
     }
 }
 
+/// Get all waterlevel entries that have a water level that matches the input parameter
+///
+/// # Parameters
+///
+/// `/level/at/<level>` water level that entries should match
 #[get("/level/at/<level>")]
-pub fn get_at_level(level: f32, db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
+pub async fn get_at_level(
+    level: f32,
+    db: &State<Database>,
+) -> Result<Json<Vec<WaterLevel>>, Status> {
     let connection = get_connection(db);
     get_json_vec(
         table
@@ -50,8 +68,16 @@ pub fn get_at_level(level: f32, db: &State<Database>) -> Result<Json<Vec<WaterLe
     )
 }
 
+/// Get all waterlevel entries that have a water level that is above the input parameter
+///
+/// # Parameters
+///
+/// `/level/above/<level>` water level that entries should exceed
 #[get("/level/above/<level>")]
-pub fn get_above_level(level: f32, db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
+pub async fn get_above_level(
+    level: f32,
+    db: &State<Database>,
+) -> Result<Json<Vec<WaterLevel>>, Status> {
     let connection = get_connection(db);
     get_json_vec(
         table
@@ -61,8 +87,16 @@ pub fn get_above_level(level: f32, db: &State<Database>) -> Result<Json<Vec<Wate
     )
 }
 
+/// Get all waterlevel entries that have a water level that is below the input parameter
+///
+/// # Parameters
+///
+/// `/level/below/<level>` water level that entries should be less than
 #[get("/level/below/<level>")]
-pub fn get_below_level(level: f32, db: &State<Database>) -> Result<Json<Vec<WaterLevel>>, Status> {
+pub async fn get_below_level(
+    level: f32,
+    db: &State<Database>,
+) -> Result<Json<Vec<WaterLevel>>, Status> {
     let connection = get_connection(db);
     get_json_vec(
         table
@@ -74,18 +108,24 @@ pub fn get_below_level(level: f32, db: &State<Database>) -> Result<Json<Vec<Wate
 
 /// Body of post request sent to / endpoint
 #[derive(serde::Deserialize, serde::Serialize)]
-pub struct Input {
+pub struct WaterlevelForm {
     pub location: (f64, f64),
     pub level: f64,
 }
 
 /// Adds new level and weather entry for the location given
 /// Used only by the IOT to record data into the API
+///
+/// # Body
+///
+/// Body data should match [`WaterlevelForm`]
 #[post("/", format = "json", data = "<data>")]
 pub async fn add_waterlevel(
-    data: Json<Input>,
+    data: Json<WaterlevelForm>,
     db: &State<Database>,
 ) -> Result<Json<Vec<WaterLevel>>, Status> {
+    trigger_webhooks(WebhookEvent::CreateWaterlevel);
+
     let connection = get_connection(db);
 
     // Get weather data
@@ -116,6 +156,8 @@ pub async fn add_waterlevel(
     )
 }
 
+/// Internal function used to insert weather entry into database
+/// Called by [`add_waterlevel()`]
 async fn add_weather(
     weather_data: &Weather,
     db: &State<Database>,
@@ -133,16 +175,16 @@ async fn add_weather(
 
 /// Response fields retrieved from the OpenWeather API
 #[derive(Debug, serde::Deserialize)]
-struct Response {
+struct WeatherResponse {
     weather: Vec<WeatherData>,
-    main: Data,
+    main: TemperatureData,
     dt: i64,
 }
 
 /// Temperature data from the OpenWeather API
-/// Made to nest within Response struct
+/// Made to nest within [`WeatherResponse`] struct
 #[derive(Debug, serde::Deserialize)]
-struct Data {
+struct TemperatureData {
     temp: f64,
     temp_min: f64,
     temp_max: f64,
@@ -151,7 +193,7 @@ struct Data {
 }
 
 /// Weather data retrieved from the OpenWeather API
-/// Made to nest within Response struct
+/// Made to nest within [`WeatherResponse`] struct
 #[derive(Debug, serde::Deserialize, Clone)]
 struct WeatherData {
     id: i16,
@@ -159,7 +201,7 @@ struct WeatherData {
 }
 
 /// Gets weather from OpenWeather api for the passed location
-/// Called by add_waterlevel in order to get weather data at the location of the arduino measuring device
+/// Called by [`add_waterlevel()`] in order to get weather data at the location of the arduino measuring device
 pub async fn get_weather(lat: f64, lon: f64) -> Result<Weather, reqwest::Error> {
     let url = format!("https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=imperial&appid={key}",
         lat = lat,
@@ -168,8 +210,8 @@ pub async fn get_weather(lat: f64, lon: f64) -> Result<Weather, reqwest::Error> 
             .expect("Unable to get weather api key environment variable")
     );
     let response = reqwest::get(&url).await?;
-    let json: Response = response.json().await?;
-    let data: Data = json.main;
+    let json: WeatherResponse = response.json().await?;
+    let data: TemperatureData = json.main;
     let weather_data: &WeatherData = &json.weather[0];
     Ok(Weather {
         id: uuid::Uuid::new_v4(),

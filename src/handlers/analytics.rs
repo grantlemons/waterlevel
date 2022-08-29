@@ -9,4 +9,4 @@ use crate::schema::config::table as c_table;
 use crate::schema::water_levels::table as wl_table;
 
 #[get("/")]
-pub fn get_default(db: &State<Database>) {}
+pub async fn get_default(db: &State<Database>) {}
