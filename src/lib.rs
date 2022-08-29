@@ -1,4 +1,4 @@
-//! Duplicate of [`main`] used for integration tests
+//! Duplicate of binary main.rs used for integration tests
 
 #[macro_use]
 extern crate rocket;
@@ -19,7 +19,7 @@ pub mod handlers {
     /// Handlers for webhook setup
     pub mod webhooks;
 }
-/// Extra functions used in handlers and main function
+/// Extra functions used in handlers and entrypoint function
 pub mod helpers;
 /// Database model structs to change from SQL types in [`schema`](crate::schema) to rust types
 pub mod models;

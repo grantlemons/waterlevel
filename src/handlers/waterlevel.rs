@@ -155,7 +155,7 @@ pub async fn add_waterlevel(
 }
 
 /// Internal function used to insert weather entry into database
-/// Called by [`add_waterlevel`]
+/// Called by [`add_waterlevel()`]
 async fn add_weather(
     weather_data: &Weather,
     db: &State<Database>,
@@ -199,7 +199,7 @@ struct WeatherData {
 }
 
 /// Gets weather from OpenWeather api for the passed location
-/// Called by [`add_waterlevel`] in order to get weather data at the location of the arduino measuring device
+/// Called by [`add_waterlevel()`] in order to get weather data at the location of the arduino measuring device
 pub async fn get_weather(lat: f64, lon: f64) -> Result<Weather, reqwest::Error> {
     let url = format!("https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&units=imperial&appid={key}",
         lat = lat,

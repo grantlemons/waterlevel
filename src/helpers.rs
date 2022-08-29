@@ -16,15 +16,49 @@ impl std::fmt::Display for WebhookEvent {
     }
 }
 
+#[derive(serde::Serialize)]
+struct WebhookBody {
+    event: String,
+}
+
+/// Send POST requests to all relevent urls based on webhook config
+pub async fn trigger_webhooks(event: WebhookEvent) {
+    use crate::diesel::prelude::*;
+    use crate::models::Webhook;
+    use crate::schema::webhooks::{dsl, table};
+
+    let connection = get_pool()
+        .get()
+        .expect("Unable to get connection from pool");
+    let client = reqwest::Client::new();
+    let urls = table
+        .filter(dsl::event.eq(event.to_string()))
+        .load::<Webhook>(&connection)
+        .expect("Unable to get records");
+    for i in urls {
+        if let Ok(_) = client
+            .post(&i.url)
+            .json(&WebhookBody {
+                event: event.to_string(),
+            })
+            .send()
+            .await
+        {};
+    }
+}
+
+/// Shared state struct for connection pool
 pub struct Database(pub ConnPool);
 
 pub type ConnPool = diesel::r2d2::Pool<PgConnManager>;
 pub type PgConnManager = diesel::r2d2::ConnectionManager<diesel::pg::PgConnection>;
 
+/// Get a connection from the shared state
 pub fn get_connection(db: &Database) -> PooledConnection<PgConnManager> {
     db.0.get().expect("Unable to get connection from pool")
 }
 
+/// Get a connection pool
 pub fn get_pool() -> ConnPool {
     dotenv().ok();
 
@@ -33,6 +67,7 @@ pub fn get_pool() -> ConnPool {
     diesel::r2d2::Pool::new(manager).expect("Unable to create connection pool")
 }
 
+/// Serialize the output of a diesel request and handle errors
 pub fn get_json_vec<Model>(
     res: Result<Vec<Model>, diesel::result::Error>,
     log: Option<&'static str>,
